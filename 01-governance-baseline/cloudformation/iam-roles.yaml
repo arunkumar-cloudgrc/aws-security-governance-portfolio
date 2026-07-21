@@ -4,7 +4,7 @@ Resources:
   # Permission boundary - caps maximum permissions for all custom roles
   PermissionBoundaryPolicy:
     Type: AWS::IAM::ManagedPolicy
-    Properties:
+    Properties::wq
       ManagedPolicyName: GovernancePermissionBoundary
       Description: 'Maximum permissions ceiling - MAS TRM 9.1.2'
       PolicyDocument:
@@ -21,7 +21,7 @@ Resources:
               - logs:DescribeLogGroups
             Resource: '*'
  
-  # Auditor role - read-only, for compliance and audit team
+  # Auditor role - read-only, for compliance and audit team.
   AuditorRole:
     Type: AWS::IAM::Role
     Properties:
