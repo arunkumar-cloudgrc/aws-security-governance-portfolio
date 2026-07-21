@@ -5,3 +5,4 @@ A hands-on governance architecture portfolio demonstrating cloud security contro
 
 **Credentials:** CCSP | CAIGS (in progress) |
 **Frameworks:** MAS TRM 2021 | ISO 27001 | NIST AI RMF | AWS Security Reference Architecture
+Testing GIT Cli
