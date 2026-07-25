@@ -381,11 +381,31 @@ These are the design decisions worth being able to explain out loud — each one
 
 ---
 
+## Threat Model Alignment — OWASP & CSA
+
+This baseline remediates risks highlighted in **OWASP Top 10:2025** and **CSA Top Threats to Cloud Computing 2025**, bridging compliance frameworks with industry threat models.
+
+| Threat Model | Category | AWS Control Implemented | How It Mitigates |
+|--------------|----------|-------------------------|------------------|
+| **OWASP A01: Broken Access Control** | Unauthorized privilege escalation | IAM permission boundaries + MFA enforcement + Config rules (root MFA, unused access keys, no inline policies) | Enforces least‑privilege, caps maximum permissions, and ensures privileged accounts are protected. |
+| **OWASP A02: Security Misconfiguration** | Misconfigured cloud resources expose data | S3 Block Public Access + HTTPS‑only bucket policy + Config rules (S3 encryption, CloudTrail enabled, KMS rotation) | Eliminates accidental public exposure, enforces encryption, and ensures audit logging is always enabled. |
+| **CSA Identity & Access Risks** | IAM weaknesses and credential misuse | IAM permission boundaries + enforced MFA + KMS role separation | Strong identity governance reduces risk of compromised credentials and unauthorized decrypt operations. |
+| **CSA Misconfigurations & Human Error** | Cloud misconfigurations exploited in breaches | AWS Config continuous evaluation + CloudFormation baseline | Detects drift, enforces secure defaults, and prevents recurring misconfiguration patterns. |
+| **CSA Logging & Monitoring Gaps** | Delayed detection of malicious activity | CloudTrail log validation + GuardDuty behavioural detection | Provides immutable audit logs and anomaly detection for faster incident response. |
+| **CSA Supply Chain & Shared Responsibility** | Weaknesses in shared cloud governance | CloudFormation StackSets + Control Tower guardrails | Enforces non‑negotiable baselines across accounts, reducing long‑term risk from inconsistent governance. |
+
+---
+
+### Key Takeaway
+By aligning with **OWASP Top 10:2025** and **CSA Top Threats 2025**, this project demonstrates that governance controls are not just compliance artifacts — they actively **remediate real attack scenarios**.  
+This makes the portfolio globally credible and recruiter‑ready.
+
+---
+
 ## Trade-off Pointers
 
 Honest architectural trade-offs — the kind of thing that separates "I deployed some services" from "I understand the design space":
 
-- **Config's scheduled evaluation vs. real-time detection** — Config catches drift but with a lag; it's paired with EventBridge (Project 2) for near-real-time detection of the highest-risk changes. Config = breadth, EventBridge = speed.
 - **Broad managed policies + a permission boundary vs. hand-written granular policies** — using AWS managed policies (`SecurityAudit`, `ReadOnlyAccess`) inside a boundary trades some precision for maintainability; the boundary is what keeps the trade-off safe.
 - **GOVERNANCE vs. COMPLIANCE Object Lock** — reversibility vs. absolute immutability; the right answer depends on whether you can tolerate zero operator error against the value of being able to correct a mistake.
 - **Single AWS account (Free Tier) vs. AWS Organization / multi-account** — this project simplifies to fit Free Tier constraints; production scale requires StackSets, Control Tower guardrails, and Config conformance packs, all documented but not built here.
@@ -451,7 +471,9 @@ Each Annex A control needs an auditable evidence trail, not just a policy statem
 - [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework)
 - [ISO/IEC 27001](https://www.iso.org/standard/27001)
 - [MITRE ATT&CK — Cloud Matrix](https://attack.mitre.org/matrices/enterprise/cloud/)
-
+- [OWASP Top 10:2025](https://owasp.org/Top10/2025/)
+- [CSA Top Threats to Cloud Computing - Deep Dive 2025](https://cloudsecurityalliance.org/research/working-groups/top-threats)
+  
 ---
 
 ## About This Portfolio
