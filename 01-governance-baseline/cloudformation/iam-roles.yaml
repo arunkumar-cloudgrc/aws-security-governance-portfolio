@@ -1,10 +1,11 @@
-iAWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: '2010-09-09'
 Description: 'P1 - IAM Roles with Permission Boundaries - MAS TRM Ch.9'
+
 Resources:
   # Permission boundary - caps maximum permissions for all custom roles
   PermissionBoundaryPolicy:
     Type: AWS::IAM::ManagedPolicy
-    Properties::wq
+    Properties:
       ManagedPolicyName: GovernancePermissionBoundary
       Description: 'Maximum permissions ceiling - MAS TRM 9.1.2'
       PolicyDocument:
@@ -20,8 +21,8 @@ Resources:
               - logs:GetLogEvents
               - logs:DescribeLogGroups
             Resource: '*'
- 
-  # Auditor role - read-only, for compliance and audit team.
+
+  # Auditor role - read-only, for compliance and audit team
   AuditorRole:
     Type: AWS::IAM::Role
     Properties:
@@ -38,7 +39,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/SecurityAudit
         - arn:aws:iam::aws:policy/ReadOnlyAccess
- 
+
   # Security operations role - GuardDuty and Config read access
   SecurityOpsRole:
     Type: AWS::IAM::Role
