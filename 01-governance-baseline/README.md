@@ -252,15 +252,10 @@ Honest architectural trade-offs ; the kind of thing that separates "I deployed s
 - [ ] `.github/workflows/validate-p1.yml` created and passing (green check on PR)
 - [ ] This README completed and committed
 - [ ] Feature branch → PR → CI green → squash-merged into `main`
-- [ ] LinkedIn post published
-- [ ] Resume bullets added to CV
-- [ ] All 5 interview Q&A pairs rehearsed out loud
 
 ---
 
 ## Questions to Answer in Your Documentation
-
-If your README and docs can answer these clearly, you're ready to defend this project in an interview:
 
 **Q: Why permission boundaries instead of just writing tighter IAM policies?**
 A permission boundary is a ceiling, not a grant ; it caps the maximum permissions a role can ever have, even if someone later attaches a broader managed policy to it. That protects against privilege creep introduced by other administrators after the fact, which a well-written policy alone can't do.
