@@ -100,7 +100,7 @@ Unchecked privilege escalation and untracked API activity are leading causes of 
 - [x] CloudFormation templates (`iam-roles.yaml`, `s3-audit-bucket.yaml`, `config-rules.yaml`, `cloudtrail.yaml`) [cite: 1]
 - [x] MAS TRM and multi-framework mapping document [cite: 1]
 - [x] GitHub Actions validation pipeline (`.github/workflows/validate-p1.yml`) [cite: 1]
-- [x] Verification screenshots demonstrating live enforcement [cite: 1]
+- [x] Verification screenshots demonstrating live enforcement [01-governance-baseline/screenshots]
 
 ## Questions to Answer in Documentation (Interview Prep)
 **Q: Why use permission boundaries instead of just writing tighter IAM policies?**
