@@ -1,4 +1,4 @@
-# 🔐 ** Security Governance Baseline in AWS - Multi-Framework Compliance Architecture**
+# 🔐 Building Security Governance Baseline in AWS - Multi-Framework Compliance Architecture
 
 ## Overview
 
