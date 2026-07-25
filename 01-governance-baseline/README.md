@@ -1,4 +1,4 @@
-# 🔐 Building Security Governance Baseline in AWS - Multi-Framework Compliance Architecture
+# 🔐 Enterprise AWS Security Governance: Mapping Cloud Controls to Global Standards
 
 ## Overview
 
