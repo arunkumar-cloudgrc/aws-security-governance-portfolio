@@ -20,7 +20,48 @@ This architecture provides automated, continuous compliance validation, drastica
 Unchecked privilege escalation and untracked API activity are leading causes of cloud breaches. This baseline ensures that even if individual policies are misconfigured, maximum access is hard-capped. It guarantees that security and audit logs remain immutable for years, ensuring verifiable forensic evidence is always available during an incident or regulatory audit [cite: 1]. 
 
 ## Architecture Diagram
-*(Include a visual architecture diagram here in the final repository)*
+```mermaid
+flowchart TB
+    subgraph IAM["🔑 Identity Layer"]
+        PB["GovernancePermissionBoundary<br/>(max-permission ceiling)"]
+        AR["GovernanceAuditorRole<br/>(read-only)"]
+        SR["GovernanceSecurityOpsRole<br/>(detection &amp; response)"]
+        PB --> AR
+        PB --> SR
+    end
+
+    subgraph DATA["🗄️ Data Protection Layer"]
+        KMS["KMS Customer-Managed Key<br/>Admin &ne; User (role separation)<br/>Annual auto-rotation"]
+        S3["S3 Audit Log Bucket<br/>SSE-KMS &middot; Versioned<br/>Object Lock GOVERNANCE, 7yr<br/>Block Public Access: ON"]
+        KMS -->|encrypts| S3
+    end
+
+    subgraph AUDIT["📜 Audit &amp; Logging Layer"]
+        CT["AWS CloudTrail<br/>Multi-region &middot; Log file validation"]
+        CT -->|delivers logs to| S3
+    end
+
+    subgraph COMPLY["✅ Compliance-as-Code Layer"]
+        CFG["AWS Config<br/>10 managed rules<br/>mas-trm-* naming convention"]
+    end
+
+    subgraph DETECT["🛡️ Detection Layer"]
+        GD["Amazon GuardDuty<br/>Behavioural threat detection<br/>S3 + EC2 Malware Protection"]
+    end
+
+    CFG -.->|evaluates| IAM
+    CFG -.->|evaluates| DATA
+    CFG -.->|evaluates| AUDIT
+    CT -.->|feeds findings to| GD
+    AR -.->|reviews evidence from| COMPLY
+    SR -.->|responds to alerts from| DETECT
+
+    style IAM fill:#1F3864,color:#ffffff,stroke:#0d1f38
+    style DATA fill:#2E74B5,color:#ffffff,stroke:#1c4a73
+    style AUDIT fill:#2E74B5,color:#ffffff,stroke:#1c4a73
+    style COMPLY fill:#548235,color:#ffffff,stroke:#375622
+    style DETECT fill:#C00000,color:#ffffff,stroke:#800000
+```
 *   **Users/Roles:** `GovernanceAuditorRole`, `GovernanceSecurityOpsRole` interacting with boundaries [cite: 1].
 *   **Logging:** Multi-region CloudTrail delivering SHA-256 validated logs to an S3 Bucket [cite: 1].
 *   **Storage:** S3 Bucket with SSE-KMS, Object Lock (7-Year Governance Mode), and Public Access Block [cite: 1].
