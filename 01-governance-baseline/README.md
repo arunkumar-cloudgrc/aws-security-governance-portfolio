@@ -24,9 +24,7 @@ Rather than treating "security baseline" as a checklist of services turned on, t
 
 ## Why It's Important
 
-Financial institutions operating out of Singapore sit at the intersection of **MAS TRM** (technology risk governance), **PDPA** (data protection), and increasingly **GDPR** and the **EU AI Act** if they serve EU customers or entities. A Cloud Security Architect in this space isn't hired to know one framework ; they're hired to reconcile several at once, in code, with evidence a regulator or auditor can actually inspect.
-
-This project is a deliberately concrete answer to the interview question *"do you have real hands-on cloud experience, or just certifications?"* ; every control here was deployed, screenshotted, and mapped to a named clause, not described in the abstract.
+Financial institutions operate at the intersection of MAS TRM (technology risk governance), GDPR, PDPA (data protection), and the EU AI Act when serving global customers or entities. A Cloud Security Architect in this space isn’t hired to master a single framework; they’re hired to reconcile several at once, codify them into enforceable controls, and produce evidence that regulators or auditors can actually inspect.
 
 ---
 
@@ -91,7 +89,7 @@ flowchart TB
 
 ---
 
-## Security Layers / Security Checks Implemented
+## Security Layers Implemented
 
 | Layer | Control | Check performed |
 |---|---|---|
@@ -108,7 +106,7 @@ flowchart TB
 
 ---
 
-## Project Structure / Flow of the Project
+## Project Structure
 
 ```
 01-governance-baseline/
@@ -121,6 +119,8 @@ flowchart TB
 │   ├── mas-trm-control-mapping.md
 │   └── kms-role-separation.md
 ├── screenshots/
+│   ├── root-mfa-enabled.png
+│   ├── iamadmin-mfa-enabled.png
 │   ├── iam-roles.png
 │   ├── iam-permission-boundary.png
 │   ├── s3-encryption.png
@@ -134,7 +134,7 @@ flowchart TB
 └── validate-p1.yml              # cfn-lint CI, runs on every push/PR to this folder
 ```
 
-**Flow:** IAM roles/boundary deployed first (identity foundation) → S3 audit bucket + KMS key (where evidence lands) → CloudTrail (start generating evidence) → Config rules (start evaluating compliance) → GuardDuty (start detecting threats) → documentation (make it auditable) → CI (make it enforceable going forward).
+**Flow:** First enable MFA on the root account, create an iamadmin role for administrative tasks, with MFA enforced. , IAM roles/boundary deployed (identity foundation) → S3 audit bucket + KMS key (where evidence lands) → CloudTrail (start generating evidence) → Config rules (start evaluating compliance) → GuardDuty (start detecting threats) → documentation (make it auditable) → CI (make it enforceable going forward).
 
 ---
 
@@ -166,22 +166,21 @@ These are the design decisions worth being able to explain out loud ; each one r
 
 ## Security Considerations
 
-- **Root account is never used for daily work** ; MFA-enforced, credentials rotated out, `portfolio-admin` IAM user used instead.
+- **Root account is never used for daily work** ; MFA-enforced, credentials rotated out, iamadmin IAM user used instead.
 - **Least privilege is enforced structurally, not just by policy wording** ; permission boundaries mean a mis-scoped attached policy still can't exceed the ceiling.
 - **Blast radius reduction** ; the Auditor and SecurityOps roles are scoped to read-only / detection-response actions respectively; neither can modify the audit trail.
 - **Immutability of evidence** ; Object Lock + CloudTrail log file validation together mean tampering is both prevented (Lock) and detectable (validation hash chain) if attempted.
 - **Explicit scope boundary ; what this project does *not* cover:** this is an **account-level governance baseline**, not workload/network security. There is no VPC, no application layer, and no runtime workload protection in this project ; that's a deliberate scope decision, not an oversight. Network and workload controls would sit in a separate project layered on top of this baseline.
-- **Detection lag is a known, documented limitation** ; AWS Config evaluates on a schedule, not in real time. This is explicitly called out (see [Trade-off Pointers](#trade-off-pointers)) and addressed by pairing this baseline with EventBridge real-time detection in Project 2.
 
 ---
 
 ## Controls Mapping
 
-*Mapped against 13 frameworks and standards. Where a framework has no genuine bearing on this project, that's stated explicitly rather than forced ; this project has no AI component, so the AI-specific standards are marked not applicable.*
+*Mapped against 13 frameworks and standards. Where a framework has no genuine bearing on this project, that's stated explicitly rather than forced.*
 
 | Framework / Standard | Reference | Portfolio control / evidence |
 |---|---|---|
-| MAS TRM 2021 | §9.1.1 MFA, §8.3 encryption, §11.2 logging | Config root-MFA rule, KMS SSE, CloudTrail |
+| MAS TRM 2021 | 9.1.1 MFA, 8.3 encryption, 11.2 logging | Config root-MFA rule, KMS SSE, CloudTrail |
 | ISO 27001 | Annex A 5.15, 8.24, 8.15 | IAM roles, KMS, CloudTrail |
 | PDPA | Protection Obligation (security arrangements) | SSE-KMS + Block Public Access on audit bucket |
 | NIST SP 800-53 Rev.5 | AC-2, AU-9, SC-12/SC-13, CM-6 | IAM account mgmt, S3 Object Lock, KMS, Config |
@@ -190,10 +189,6 @@ These are the design decisions worth being able to explain out loud ; each one r
 | ISO 27002 | 5.15 Access control, 8.24 Cryptography, 8.15 Logging | IAM, KMS, CloudTrail |
 | ISO 27017 | CLD.9.5.1 segregation, CLD.12.4.5 monitoring | KMS role separation, Config compliance monitoring |
 | ISO 27018 | 11.1 PII retention/disposal in logs | S3 Object Lock retention policy, lifecycle rules |
-| MAS FEAT | Not applicable | No AI system in scope for this project |
-| NIST AI RMF | Not applicable | No AI system in scope for this project |
-| ISO 42001 | Not applicable | No AI management system in scope for this project |
-| EU AI Act | Not applicable | No AI system in scope for this project |
 
 ---
 
