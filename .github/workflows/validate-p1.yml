@@ -1,0 +1,15 @@
+name: Validate P1 - Governance Baseline
+on:
+  push:
+    paths: ['01-governance-baseline/**']
+  pull_request:
+    paths: ['01-governance-baseline/**']
+jobs:
+  cfn-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cfn-lint
+        run: pip install cfn-lint
+      - name: Lint CloudFormation templates
+        run: cfn-lint 01-governance-baseline/cloudformation/*.yaml
