@@ -9,7 +9,7 @@ A hands-on governance architecture portfolio demonstrating cloud security contro
 ## Projects
 | # | Project | Key services | MAS TRM mapping |
 |---|---------|-------------|-----------------|
-| P1 | Security Governance Baseline | CloudFormation, Config, GuardDuty, KMS, CloudTrail | Ch.9 Access Control, Ch.11 Audit |
+| P1 | Governance Baseline | CloudFormation, Config, GuardDuty, KMS, CloudTrail | Ch.9 Access Control, Ch.11 Audit |
 | P2 | Threat Detection Pipeline | EventBridge, SNS, CloudWatch | Ch.10 Incident Response |
 | P3 | IAM Governance & Access Analysis | IAM, Access Analyzer, Credential Reports | Ch.9 Identity Management |
 | P4 | AI Governance Framework | Bedrock design, NIST AI RMF | MAS FEAT Principles |
