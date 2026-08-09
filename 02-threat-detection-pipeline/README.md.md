@@ -164,40 +164,40 @@ This section exists because "we have alerting" means very different things depen
 The operational core of this project — not just what fires, but what a responder does when it does.
 
 ### 🔴 Playbook: IRP-001: IAM Access Key Created
-> **Trigger:** `SECURITY-iam-policy-change-detected` alarm fires, or the IAM-key-creation EventBridge rule matches.
-> **Detection layer:** CloudWatch Alarm (metric filter) + EventBridge (event pattern).
-> **Alert path:** CloudWatch Alarm → SNS → email to on-call within 5 minutes.
+> - **Trigger:** `SECURITY-iam-policy-change-detected` alarm fires, or the IAM-key-creation EventBridge rule matches.
+> - **Detection layer:** CloudWatch Alarm (metric filter) + EventBridge (event pattern).
+> - **Alert path:** CloudWatch Alarm → SNS → email to on-call within 5 minutes.
 > - **Immediate action:** Confirm the change against the approved change calendar. No matching ticket → treat as unauthorized.
 > - **Rollback:** Compare against the last-known-good IAM policy version; re-attach via `aws iam set-default-policy-version`; disable the key/session if attached to a suspicious principal.
 > - **Escalation:** Security Architect → CISO if privilege escalation is suspected (e.g. `AdministratorAccess` added, or a permission boundary removed).
 > - **Regulatory clock:** MAS TRM Section 13 (1-hour internal threshold) starts at detection.
 
 ### 🔴 Playbook: IRP-002: Root Account Login Detected
-- **Trigger:** `SECURITY-root-login-detected` alarm fires (Period=60s)
-- **Detection layer:** CloudWatch Alarm on the CloudTrail root-login metric
-- **Alert path:** SNS → email — P1-critical by definition, since root bypasses every IAM permission boundary and SCP from Project 1
-- **Immediate action:** Confirm via CloudTrail (`userIdentity.type=Root`); check source IP against known corporate ranges; escalate immediately if unrecognised.
-- **Rollback:** Rotate root password; revoke active root access keys; preserve CloudTrail logs for the session window.
-- **Escalation:** Security Architect → CISO → Legal if data exposure is confirmed.
-- **Regulatory clock:** MAS TRM 1-hour threshold if customer data or critical systems were accessed.
+> - **Trigger:** `SECURITY-root-login-detected` alarm fires (Period=60s)
+> - **Detection layer:** CloudWatch Alarm on the CloudTrail root-login metric
+> - **Alert path:** SNS → email — P1-critical by definition, since root bypasses every IAM permission boundary and SCP from Project 1
+> - **Immediate action:** Confirm via CloudTrail (`userIdentity.type=Root`); check source IP against known corporate ranges; escalate immediately if unrecognised.
+> - **Rollback:** Rotate root password; revoke active root access keys; preserve CloudTrail logs for the session window.
+> - **Escalation:** Security Architect → CISO → Legal if data exposure is confirmed.
+> - **Regulatory clock:** MAS TRM 1-hour threshold if customer data or critical systems were accessed.
 
 ### 🔴 Playbook: IRP-003: S3 Public Access Change
-- **Trigger:** EventBridge S3 rule matches `PutBucketPublicAccessBlock`, `DeletePublicAccessBlock`, or `PutBucketAcl`
-- **Detection layer:** EventBridge — typically single-digit seconds after CloudTrail delivers the event
-- **Alert path:** EventBridge → SNS — treated as a live data-exposure event, not a future risk (CSA's #1-ranked cloud threat)
-- **Immediate action:** Immediately re-apply S3 Block Public Access; identify who/what made the change and why.
-- **Rollback:** Restore the bucket policy to last-known-good; if the bucket held sensitive data, treat as a potential breach pending investigation.
-- **Escalation:** Security Architect → Data Protection Officer if personal data may have been exposed.
-- **Regulatory clock:** GDPR Art.33 (72-hour) and PDPA mandatory notification clocks start at detection if personal data exposure is confirmed.
+> - **Trigger:** EventBridge S3 rule matches `PutBucketPublicAccessBlock`, `DeletePublicAccessBlock`, or `PutBucketAcl`
+> - **Detection layer:** EventBridge — typically single-digit seconds after CloudTrail delivers the event
+> - **Alert path:** EventBridge → SNS — treated as a live data-exposure event, not a future risk (CSA's #1-ranked cloud threat)
+> - **Immediate action:** Immediately re-apply S3 Block Public Access; identify who/what made the change and why.
+> - **Rollback:** Restore the bucket policy to last-known-good; if the bucket held sensitive data, treat as a potential breach pending investigation.
+> - **Escalation:** Security Architect → Data Protection Officer if personal data may have been exposed.
+> - **Regulatory clock:** GDPR Art.33 (72-hour) and PDPA mandatory notification clocks start at detection if personal data exposure is confirmed.
 
 ### 🟠 Playbook: Suspicious API Call Pattern (GuardDuty severity ≥ 7)
-- **Trigger:** EventBridge rule matches any GuardDuty finding with severity ≥ 7
-- **Detection layer:** GuardDuty (behavioural) → EventBridge (severity filter — avoids alert fatigue by design)
-- **Alert path:** EventBridge → SNS — severity filtering means every alert that reaches a human is worth their attention
-- **Immediate action:** Review the finding type and affected resource; correlate against the Dashboard's Logs Insights query for the same window.
-- **Rollback:** Depending on finding type — revoke the affected credential/session, isolate the instance's security group, or block the source IP.
-- **Escalation:** Security Architect; CISO if the finding indicates likely credential compromise rather than a false positive.
-- **Regulatory clock:** Assessment-dependent — MAS TRM 1-hour clock starts if confirmed genuine.
+> - **Trigger:** EventBridge rule matches any GuardDuty finding with severity ≥ 7
+> - **Detection layer:** GuardDuty (behavioural) → EventBridge (severity filter — avoids alert fatigue by design)
+> - **Alert path:** EventBridge → SNS — severity filtering means every alert that reaches a human is worth their attention
+> - **Immediate action:** Review the finding type and affected resource; correlate against the Dashboard's Logs Insights query for the same window.
+> - **Rollback:** Depending on finding type — revoke the affected credential/session, isolate the instance's security group, or block the source IP.
+> - **Escalation:** Security Architect; CISO if the finding indicates likely credential compromise rather than a false positive.
+> - **Regulatory clock:** Assessment-dependent — MAS TRM 1-hour clock starts if confirmed genuine.
 
 ---
 
