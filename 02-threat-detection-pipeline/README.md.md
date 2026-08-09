@@ -16,7 +16,7 @@
 
 Project 1 answered *"is this account configured correctly?"* — on a schedule. This project answers the question that matters between those evaluation cycles: *"did something bad just happen, and does anyone know yet?"*
 
-It is an automated detection pipeline covering the four highest-risk event patterns identified from this portfolio's own threat model — root account login, IAM access key creation, S3 public-access changes, and high-severity GuardDuty findings — routed to a notification channel within **60 seconds to low minutes** of occurrence, backed by three written incident-response runbooks that define exactly what happens next. It is organised into three deliberately separate layers — **Detection, Correlation, Response** — because conflating them is how detection pipelines become either too noisy to trust or too rigid to extend.
+It is an automated detection pipeline covering the four highest-risk event patterns identified from this portfolio's own threat model — IAM access key creation, root account login, S3 public-access changes, and high-severity GuardDuty findings — routed to a notification channel within **60 seconds to low minutes** of occurrence, backed by four written incident-response runbooks that define exactly what happens next. It is organised into three deliberately separate layers — **Detection, Correlation, Response** — because conflating them is how detection pipelines become either too noisy to trust or too rigid to extend.
 
 **Author context:** Built by a 20-year enterprise security practitioner (IBM Guardium DAM, Tripwire FIM, enterprise IAM governance) extending Project 1's governance baseline into a real-time detection and response capability.
 
@@ -24,7 +24,7 @@ It is an automated detection pipeline covering the four highest-risk event patte
 
 ## The Problem
 
-Cloud environments generate a continuous stream of API activity. A root login, a new IAM access key, and a routine S3 read look identical in volume — the difference between "normal" and "incident" is entirely in the pattern, not the raw event. Without something watching for specific high-risk patterns, that difference is invisible until someone goes looking for it.
+Cloud environments generate a continuous stream of API activity. A new IAM access key, a root login, and a routine S3 read look identical in volume — the difference between "normal" and "incident" is entirely in the pattern, not the raw event. Without something watching for specific high-risk patterns, that difference is invisible until someone goes looking for it.
 
 This isn't a hypothetical framing. The **Cloud Security Alliance's Top Threats to Cloud Computing (2024)** report — the industry's most cited ranked threat research for cloud environments — places **Misconfiguration and Inadequate Change Control at #1** and **Identity and Access Management at #2** out of eleven ranked threats, with Limited Cloud Visibility and Observability entering as a new top-ten threat. Those three findings describe this project's problem statement almost exactly.
 
@@ -41,7 +41,7 @@ This isn't a hypothetical framing. The **Cloud Security Alliance's Top Threats t
 |---|---|
 | High-risk events go unnoticed between Config's evaluation cycles | EventBridge + CloudWatch Alarms close the gap with 60-second-to-low-minute detection on named threat scenarios |
 | Regulatory notification clocks (MAS TRM 1-hour, GDPR 72-hour) start at *awareness*, not at discovery | Near-real-time detection means the clock starts when the event happens, not days later during a manual review |
-| Inconsistent incident response depending on who's on call | Three written runbooks (IRP-001/002/003) mean the response doesn't depend on institutional memory |
+| Inconsistent incident response depending on who's on call | Three written runbooks (IRP-001/002/003/004) mean the response doesn't depend on institutional memory |
 | Alert fatigue makes teams ignore monitoring tools | Severity-filtered GuardDuty routing (≥7 only) and single-purpose EventBridge rules — no broad heuristics needing constant tuning |
 | "We have monitoring" claims that don't survive scrutiny | Coverage is stated as a number against a named benchmark (Section on Controls Mapping), with gaps documented, not hidden |
 
@@ -82,7 +82,7 @@ flowchart TB
     subgraph RESP["🚨 Response Layer"]
         SNS["SNS Topic<br/>governance-security-alerts"]
         SOC["SOC / On-call<br/>Email notification"]
-        RB["Incident Response Runbook<br/>IRP-001 / 002 / 003"]
+        RB["Incident Response Runbook<br/>IRP-001 / 002 / 003 / 004"]
         SNS --> SOC --> RB
     end
 
@@ -112,7 +112,7 @@ This section exists because "we have alerting" means very different things depen
 | **1 — Visibility** | You can see what happened, after the fact | Project 1: CloudTrail logging, Config compliance snapshots |
 | **2 — Detection** | You're told something happened, close to when it happened | This project: CloudWatch Alarms (≤60s–5min), GuardDuty behavioural findings |
 | **3 — Correlation** | Related signals are matched and routed automatically, not manually pieced together | This project: EventBridge pattern matching, single-pane CloudWatch|
-| **4 — Response** | A human has a pre-agreed plan, and regulatory obligations are tracked automatically | This project: IRP-001/002/003 runbooks, MAS TRM/GDPR clocks embedded in the response procedure |
+| **4 — Response** | A human has a pre-agreed plan, and regulatory obligations are tracked automatically | This project: IRP-001/002/003/004 runbooks, MAS TRM/GDPR clocks embedded in the response procedure |
 
 **What's honestly still missing for Level 5 (automated remediation):** no SOAR-style auto-response, no ticketing integration, no 24/7 rotation. Every response action in this pipeline is human-executed against a runbook. That's a stated scope boundary (see [Trade-off Pointers](#trade-off-pointers)), not an oversight.
 
@@ -152,7 +152,7 @@ This section exists because "we have alerting" means very different things depen
 
 ## Technical Approach — High‑Level Steps
 
-- **CloudWatch Alarms: Create CloudWatch alarms (via CloudFormation or Console) that monitor CloudTrail‑derived metrics like RootLoginCount, IAMPolicyChanges, and S3BucketPolicyChanges, and attach them to an SNS topic (confirm the email subscription) for immediate SOC notification.
+- **CloudWatch Alarms: Create CloudWatch alarms (via CloudFormation or Console) that monitor CloudTrail‑derived metrics like IAMPolicyChanges or IAM Access Key Creation, RootLoginCount, and S3BucketPolicyChanges, and attach them to an SNS topic (confirm the email subscription) for immediate SOC notification.
 - **EventBridge Rules: Define EventBridge rules with targeted event patterns (root sign‑ins, IAM API calls, S3 public‑access changes, GuardDuty high‑severity findings) and route matched events to the governance-security-alerts SNS topic for correlation and fan‑out.
 - **Security Dashboard: Build a CloudWatch dashboard named Security‑Governance‑Portfolio that aggregates alarm status, AWS Config NonCompliantRules count, GuardDuty finding counts, and a CloudTrail Logs Insights query for recent high‑risk events.
 - **CI and Validation: Add a GitHub Actions workflow to lint CloudFormation templates and validate EventBridge JSON on PRs so changes are tested and gated before deployment.
@@ -164,40 +164,40 @@ This section exists because "we have alerting" means very different things depen
 The operational core of this project — not just what fires, but what a responder does when it does.
 
 ### 🔴 Playbook: IRP-001: IAM Access Key Created
-> **Trigger:** `SECURITY-iam-policy-change-detected` alarm fires, or the IAM-key-creation EventBridge rule matches
-> **Detection layer:** CloudWatch Alarm (metric filter) + EventBridge (event pattern)
-> **Alert path:** CloudWatch Alarm → SNS → email to on-call within 5 minutes
-> **Immediate action:** Confirm the change against the approved change calendar. No matching ticket → treat as unauthorized.
-> **Rollback:** Compare against the last-known-good IAM policy version; re-attach via `aws iam set-default-policy-version`; disable the key/session if attached to a suspicious principal.
-> **Escalation:** Security Architect → CISO if privilege escalation is suspected (e.g. `AdministratorAccess` added, or a permission boundary removed).
-> **Regulatory clock:** MAS TRM Section 13 (1-hour internal threshold) starts at detection.
+- **Trigger:** `SECURITY-iam-policy-change-detected` alarm fires, or the IAM-key-creation EventBridge rule matches.
+- **Detection layer:** CloudWatch Alarm (metric filter) + EventBridge (event pattern).
+- **Alert path:** CloudWatch Alarm → SNS → email to on-call within 5 minutes.
+- **Immediate action:** Confirm the change against the approved change calendar. No matching ticket → treat as unauthorized.
+- **Rollback:** Compare against the last-known-good IAM policy version; re-attach via `aws iam set-default-policy-version`; disable the key/session if attached to a suspicious principal.
+- **Escalation:** Security Architect → CISO if privilege escalation is suspected (e.g. `AdministratorAccess` added, or a permission boundary removed).
+- **Regulatory clock:** MAS TRM Section 13 (1-hour internal threshold) starts at detection.
 
 ### 🔴 Playbook: IRP-002: Root Account Login Detected
-> **Trigger:** `SECURITY-root-login-detected` alarm fires (Period=60s)
-> **Detection layer:** CloudWatch Alarm on the CloudTrail root-login metric
-> **Alert path:** SNS → email — P1-critical by definition, since root bypasses every IAM permission boundary and SCP from Project 1
-> **Immediate action:** Confirm via CloudTrail (`userIdentity.type=Root`); check source IP against known corporate ranges; escalate immediately if unrecognised.
-> **Rollback:** Rotate root password; revoke active root access keys; preserve CloudTrail logs for the session window.
-> **Escalation:** Security Architect → CISO → Legal if data exposure is confirmed.
-> **Regulatory clock:** MAS TRM 1-hour threshold if customer data or critical systems were accessed.
+- **Trigger:** `SECURITY-root-login-detected` alarm fires (Period=60s)
+- **Detection layer:** CloudWatch Alarm on the CloudTrail root-login metric
+- **Alert path:** SNS → email — P1-critical by definition, since root bypasses every IAM permission boundary and SCP from Project 1
+- **Immediate action:** Confirm via CloudTrail (`userIdentity.type=Root`); check source IP against known corporate ranges; escalate immediately if unrecognised.
+- **Rollback:** Rotate root password; revoke active root access keys; preserve CloudTrail logs for the session window.
+- **Escalation:** Security Architect → CISO → Legal if data exposure is confirmed.
+- **Regulatory clock:** MAS TRM 1-hour threshold if customer data or critical systems were accessed.
 
 ### 🔴 Playbook: IRP-003: S3 Public Access Change
-> **Trigger:** EventBridge S3 rule matches `PutBucketPublicAccessBlock`, `DeletePublicAccessBlock`, or `PutBucketAcl`
-> **Detection layer:** EventBridge — typically single-digit seconds after CloudTrail delivers the event
-> **Alert path:** EventBridge → SNS — treated as a live data-exposure event, not a future risk (CSA's #1-ranked cloud threat)
-> **Immediate action:** Immediately re-apply S3 Block Public Access; identify who/what made the change and why.
-> **Rollback:** Restore the bucket policy to last-known-good; if the bucket held sensitive data, treat as a potential breach pending investigation.
-> **Escalation:** Security Architect → Data Protection Officer if personal data may have been exposed.
-> **Regulatory clock:** GDPR Art.33 (72-hour) and PDPA mandatory notification clocks start at detection if personal data exposure is confirmed.
+- **Trigger:** EventBridge S3 rule matches `PutBucketPublicAccessBlock`, `DeletePublicAccessBlock`, or `PutBucketAcl`
+- **Detection layer:** EventBridge — typically single-digit seconds after CloudTrail delivers the event
+- **Alert path:** EventBridge → SNS — treated as a live data-exposure event, not a future risk (CSA's #1-ranked cloud threat)
+- **Immediate action:** Immediately re-apply S3 Block Public Access; identify who/what made the change and why.
+- **Rollback:** Restore the bucket policy to last-known-good; if the bucket held sensitive data, treat as a potential breach pending investigation.
+- **Escalation:** Security Architect → Data Protection Officer if personal data may have been exposed.
+- **Regulatory clock:** GDPR Art.33 (72-hour) and PDPA mandatory notification clocks start at detection if personal data exposure is confirmed.
 
 ### 🟠 Playbook: Suspicious API Call Pattern (GuardDuty severity ≥ 7)
-> **Trigger:** EventBridge rule matches any GuardDuty finding with severity ≥ 7
-> **Detection layer:** GuardDuty (behavioural) → EventBridge (severity filter — avoids alert fatigue by design)
-> **Alert path:** EventBridge → SNS — severity filtering means every alert that reaches a human is worth their attention
-> **Immediate action:** Review the finding type and affected resource; correlate against the Dashboard's Logs Insights query for the same window.
-> **Rollback:** Depending on finding type — revoke the affected credential/session, isolate the instance's security group, or block the source IP.
-> **Escalation:** Security Architect; CISO if the finding indicates likely credential compromise rather than a false positive.
-> **Regulatory clock:** Assessment-dependent — MAS TRM 1-hour clock starts if confirmed genuine.
+- **Trigger:** EventBridge rule matches any GuardDuty finding with severity ≥ 7
+- **Detection layer:** GuardDuty (behavioural) → EventBridge (severity filter — avoids alert fatigue by design)
+- **Alert path:** EventBridge → SNS — severity filtering means every alert that reaches a human is worth their attention
+- **Immediate action:** Review the finding type and affected resource; correlate against the Dashboard's Logs Insights query for the same window.
+- **Rollback:** Depending on finding type — revoke the affected credential/session, isolate the instance's security group, or block the source IP.
+- **Escalation:** Security Architect; CISO if the finding indicates likely credential compromise rather than a false positive.
+- **Regulatory clock:** Assessment-dependent — MAS TRM 1-hour clock starts if confirmed genuine.
 
 ---
 
@@ -243,9 +243,9 @@ The operational core of this project — not just what fires, but what a respond
 | RESPOND: RS.AN | Analysis | Runbook investigation steps + Logs Insights query |
 | RESPOND: RS.CO | Communication | SNS notification + defined escalation paths |
 
-**ISO/IEC 27001:2022** — Annex A 5.24–5.28 (incident management planning, assessment, response, learning, evidence collection) → runbooks IRP-001/002/003, each covering all five clauses end to end.
+**ISO/IEC 27001:2022** — Annex A 5.24–5.28 (incident management planning, assessment, response, learning, evidence collection) → runbooks IRP-001/002/003/004, each covering all five clauses end to end.
 
-**MAS TRM 2021** — §9.1/9.1.3 (privileged access monitoring), §10.1 (incident management), §12.1 (security monitoring), Section 13 (MAS notification) → root/IAM detection, EventBridge + runbooks, GuardDuty + Dashboard, 1-hour clock in every runbook.
+**MAS TRM 2021** —  9.1/9.1.3 (privileged access monitoring), 10.1 (incident management), 12.1 (security monitoring), Section 13 (MAS notification) → root/IAM detection, EventBridge + runbooks, GuardDuty + Dashboard, 1-hour clock in every runbook.
 
 <details>
 <summary><strong>Extended mapping — remaining 9 portfolio standards</strong></summary>
@@ -293,7 +293,7 @@ The operational core of this project — not just what fires, but what a respond
 
 ### Coverage — calculated against CIS AWS Foundations Benchmark v3.0.0's 14 monitoring controls
 
-- **3 of 14** CIS-recommended monitoring controls implemented directly (root usage, IAM policy changes, S3 policy changes) = **21%** of the full CIS monitoring section by control count.
+- **3 of 14** CIS-recommended monitoring controls implemented directly (IAM policy changes, root usage, S3 policy changes. GuardDuty findings) = **21%** of the full CIS monitoring section by control count.
 - **4 of 4** threat scenarios identified in this project's own risk assessment have dedicated, working detection = **100%** coverage of prioritized in-scope scenarios.
 - Remaining 10 CIS controls (MFA sign-in, CloudTrail config changes, console auth failures, CMK deletion, Config changes, security groups, NACLs, gateways, route tables, VPC changes) are explicitly **next-iteration scope**, not silently missing.
 
@@ -325,8 +325,7 @@ The operational core of this project — not just what fires, but what a respond
 
 - [ ] `cloudwatch-alarms.yaml` deployed — 3 alarms + SNS topic, subscription confirmed
 - [ ] All 4 EventBridge rules created and verified `ENABLED` (`aws events list-rules`)
-- [ ] CloudWatch Dashboard created with all 4 widgets (alarms, Config, GuardDuty, Logs Insights)
-- [ ] 3 incident-response runbooks written (IRP-001/002/003)
+- [ ] 4 incident-response runbooks written (IRP-001/002/003/004)
 - [ ] Screenshots captured — EventBridge rules, CloudWatch alarms, GuardDuty findings, sns topics config, AWS email notifications (account ID redacted)
 - [ ] `.github/workflows/validate-p2.yml` created and passing (green check on PR)
 - [ ] This README completed and committed
