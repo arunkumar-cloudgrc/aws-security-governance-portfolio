@@ -16,7 +16,7 @@
 
 Project 1 answered *"is this account configured correctly?"* — on a schedule. This project answers the question that matters between those evaluation cycles: *"did something bad just happen, and does anyone know yet?"*
 
-It is an automated detection pipeline covering the four highest-risk event patterns identified from this portfolio's own threat model — IAM access key creation, root account login, S3 public-access changes, and high-severity GuardDuty findings — routed to a notification channel within **60 seconds to low minutes** of occurrence, backed by four written incident-response runbooks that define exactly what happens next. It is organised into three deliberately separate layers — **Detection, Correlation, Response** — because conflating them is how detection pipelines become either too noisy to trust or too rigid to extend.
+It is an automated detection pipeline covering the four highest-risk event patterns identified from this portfolio's own threat model — IAM policy change detected or access key creation, root account login, S3 public-access changes, and high-severity GuardDuty findings — routed to a notification channel within **60 seconds to low minutes** of occurrence, backed by four written incident-response runbooks that define exactly what happens next. It is organised into three deliberately separate layers — **Detection, Correlation, Response** — because conflating them is how detection pipelines become either too noisy to trust or too rigid to extend.
 
 **Author context:** Built by a 20-year enterprise security practitioner (IBM Guardium DAM, Tripwire FIM, enterprise IAM governance) extending Project 1's governance baseline into a real-time detection and response capability.
 
@@ -163,7 +163,7 @@ This section exists because "we have alerting" means very different things depen
 
 The operational core of this project — not just what fires, but what a responder does when it does.
 
-### 🔴 Playbook: IRP-001: IAM Access Key Created
+### 🔴 Playbook: IRP-001: IAM Policy Change Detected or Access Key Created
 > - **Trigger:** `SECURITY-iam-policy-change-detected` alarm fires, or the IAM-key-creation EventBridge rule matches.
 > - **Detection layer:** CloudWatch Alarm (metric filter) + EventBridge (event pattern).
 > - **Alert path:** CloudWatch Alarm → SNS → email to on-call within 5 minutes.
