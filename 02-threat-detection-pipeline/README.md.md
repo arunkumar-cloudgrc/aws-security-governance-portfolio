@@ -75,7 +75,7 @@ flowchart TB
     subgraph RESP["🚨 Response Layer"]
         SNS["SNS Topic<br/>governance-security-alerts"]
         SOC["SOC / On-call<br/>Email notification"]
-        RB["Incident Response Runbook<br/>IRP-001 / 002 / 003 / 004"]
+        RB["Incident Response Runbook<br/> : IRP-001 / 002 / 003 / 004"]
         SNS --> SOC --> RB
     end
 
