@@ -61,7 +61,7 @@ A Cloud Security Architect isn't hired to turn on GuardDuty and call it done —
 flowchart TB
     subgraph DETECT["🔍 Detection Layer"]
         CT["AWS CloudTrail<br/>Multi-region management + data events"]
-        CW["CloudWatch Alarms<br/>3 metric alarms: root login, IAM policy, S3 policy"]
+        CW["CloudWatch Alarms<br/>4 metric alarms: root login, IAM policy, S3 policy, GuardDuty high severity"]
         GD["Amazon GuardDuty<br/>Behavioural threat detection"]
         CT --> CW
         CT -.->|feeds| GD
@@ -75,7 +75,7 @@ flowchart TB
     subgraph RESP["🚨 Response Layer"]
         SNS["SNS Topic<br/>governance-security-alerts"]
         SOC["SOC / On-call<br/>Email notification"]
-        RB["Incident Response Runbook<br/>IRP-001 / 002 / 003 / 004"]
+        RB["Incident Response Runbook:<br/> IRP-001 / 002 / 003 / 004"]
         SNS --> SOC --> RB
     end
 
