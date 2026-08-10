@@ -51,7 +51,7 @@ A Cloud Security Architect isn't hired to turn on GuardDuty and call it done —
 - **Detection layer** — 3 CloudWatch Alarms (root login, IAM policy change, S3 bucket policy change) + GuardDuty behavioural detection, layered on Project 1's CloudTrail and Config
 - **Correlation layer** — 4 EventBridge event-pattern rules that match specific high-risk API calls and route them, plus a consolidating Alarms + GuardDuty + a live Logs Insights query into one screen
 - **Response layer** — an SNS topic delivering notifications, and three incident-response runbooks (IRP-001/002/003/004) defining confirm → contain → rollback → evidence-preservation steps with regulatory clocks built in
-- **Governance documentation** — 13-framework control mapping led by CIS AWS Foundations Benchmark, NIST CSF 2.0, ISO 27001, and MAS TRM 2021, plus this README and a GitHub Actions CI pipeline
+- **Governance documentation** — 13-framework control mapping led by CIS AWS Foundations Benchmark, NIST CSF 2.0, ISO 27001, and MAS TRM 2021, plus this README and a GitHub Actions CI pipeline 
 
 ---
 
