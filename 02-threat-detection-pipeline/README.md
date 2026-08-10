@@ -1,7 +1,7 @@
 # 🔍 Automated Threat Detection & Alerting Pipeline
 ### Project 2 of 4 — AWS Cloud Security Governance Portfolio
 
-> A real-time threat detection and alerting pipeline — EventBridge, CloudWatch Alarms, and SNS, layered on the Project 1 governance baseline — built as a response to named threat scenarios (unauthorized IAM changes, suspicious API calls, live misconfigurations), not as a services checklist. Every alert maps to a written runbook and a regulatory notification clock.
+> A real-time threat detection and alerting pipeline — EventBridge, CloudWatch Alarms, and SNS, layered on the Governance Baseline (Project 1) - built as a response to named threat scenarios (unauthorized IAM changes, suspicious API calls, live misconfigurations), not as a services checklist. Every alert maps to a written runbook and a regulatory notification clock.
 
 ---
 
