@@ -1,20 +1,13 @@
 # 🔍 Automated Threat Detection & Alerting Pipeline
 ### Project 2 of 4 — AWS Cloud Security Governance Portfolio
 
-![AWS](https://img.shields.io/badge/AWS-Free%20Tier-FF9900?logo=amazonaws&logoColor=white)
-![IaC](https://img.shields.io/badge/Infrastructure-as%20Code-blue)
-![CI](https://img.shields.io/badge/CI-cfn--lint%20%2B%20JSON-brightgreen)
-![Frameworks](https://img.shields.io/badge/Frameworks-13%20mapped-informational)
-![Detection](https://img.shields.io/badge/Detection-≤60s%20latency-critical)
-![Status](https://img.shields.io/badge/status-portfolio%20project-lightgrey)
-
-> A real-time threat detection and alerting pipeline — EventBridge, CloudWatch Alarms, and SNS, layered on the Project 1 governance baseline — built as a response to named threat scenarios (unauthorized IAM changes, suspicious API calls, live misconfigurations), not as a services checklist. Every alert maps to a written runbook and a regulatory notification clock.
+> A real-time threat detection and alerting pipeline — EventBridge, CloudWatch Alarms, and SNS, layered on the Governance Baseline (Project 1) - built as a response to named threat scenarios (unauthorized IAM changes, suspicious API calls, live misconfigurations), not as a services checklist. Every alert maps to a written runbook and a regulatory notification clock.
 
 ---
 
 ## Executive Summary
 
-Project 1 answered *"is this account configured correctly?"* — on a schedule. This project answers the question that matters between those evaluation cycles: *"did something bad just happen, and does anyone know yet?"*
+Governance Baseline (Project 1) answered *"is this account configured correctly?"* — on a schedule. This project answers the question that matters between those evaluation cycles: *"did something bad just happen, and does anyone know yet?"*
 
 It is an automated detection pipeline covering the four highest-risk event patterns identified from this portfolio's own threat model — IAM policy change detected or access key creation, root account login, S3 public-access changes, and high-severity GuardDuty findings — routed to a notification channel within **60 seconds to low minutes** of occurrence, backed by four written incident-response runbooks that define exactly what happens next. It is organised into three deliberately separate layers — **Detection, Correlation, Response** — because conflating them is how detection pipelines become either too noisy to trust or too rigid to extend.
 
