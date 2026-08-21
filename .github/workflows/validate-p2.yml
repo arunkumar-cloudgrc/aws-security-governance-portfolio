@@ -1,0 +1,21 @@
+name: Validate P2 - Detection Pipeline
+on:
+  push:
+    paths: ['02-detection-pipeline/**']
+  pull_request:
+    paths: ['02-detection-pipeline/**']
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cfn-lint
+        run: pip install cfn-lint
+      - name: Lint CloudFormation templates
+        run: cfn-lint 02-detection-pipeline/cloudformation/*.yaml
+      - name: Validate EventBridge JSON patterns
+        run: |
+          for f in 02-detection-pipeline/eventbridge-rules/*.json; do
+            echo "Checking $f"
+            jq empty "$f"
+          done
