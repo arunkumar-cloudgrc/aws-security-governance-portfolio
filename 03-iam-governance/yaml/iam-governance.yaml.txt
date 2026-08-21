@@ -1,0 +1,94 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: IAM Governance Roles with Permission Boundaries (Least-Privilege Design)
+
+Resources:
+
+  # Permission Boundary Policy (applied to all roles)
+  PermissionBoundaryPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: PermissionBoundaryPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: RestrictOutsideScope
+            Effect: Deny
+            Action: "*"
+            Resource: "*"
+            Condition:
+              StringNotEquals:
+                aws:RequestedRegion: "ap-southeast-1"
+
+  # Role 1 — SecurityAuditor
+  SecurityAuditorRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: SecurityAuditor
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "arn:aws:iam::136467753059:root"   # Replace with your account ID
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/SecurityAudit
+      PermissionsBoundary: !Ref PermissionBoundaryPolicy
+      # Broad managed policy (SecurityAudit) grants read-only across security tools
+      # MINUS boundary restrictions (region scoping) = effective least-privilege auditor
+
+  # Role 2 — Developer
+  DeveloperRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Developer
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "arn:aws:iam::136467753059:root"
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchReadOnlyAccess
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      PermissionsBoundary: !Ref PermissionBoundaryPolicy
+      # Broad managed policies (S3 ReadOnly + CloudWatch ReadOnly)
+      # MINUS boundary restrictions = effective permissions limited to monitoring & S3 read-only
+
+  # Role 3 — IncidentResponder
+  IncidentResponderRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: IncidentResponder
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "arn:aws:iam::136467753059:root"
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSSupportAccess
+      PermissionsBoundary: !Ref PermissionBoundaryPolicy
+      # Broad managed policy (SupportAccess) allows incident response actions
+      # MINUS boundary restrictions = effective permissions scoped to safe response operations
+
+  # Role 4 — ComplianceViewer
+  ComplianceViewerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ComplianceViewer
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "arn:aws:iam::136467753059:root"
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSConfigUserAccess
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      PermissionsBoundary: !Ref PermissionBoundaryPolicy
+      # Broad managed policies (Config + Audit Manager read-only)
+      # MINUS boundary restrictions = effective permissions limited to compliance visibility
