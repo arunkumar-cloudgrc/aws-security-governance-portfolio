@@ -23,7 +23,7 @@ It deploys a four-role least-privilege IAM hierarchy (`SecurityAuditor`, `Develo
 | External/cross-account access exposure goes undetected between manual reviews | IAM Access Analyzer evaluates resource-based policies continuously, not on a quarterly audit cycle | **Detection latency: minutes**, vs. a manual quarterly review baseline of up to 90 days — see [Measurable Outcomes](#measurable-outcomes) |
 | Stale credentials (unused/unrotated keys, dormant users) are a common persistence vector | Structured credential-report review flags keys >90 days unrotated and MFA gaps on a defined cadence | **Credential hygiene compliance: target ≥95%** of active keys rotated within policy window |
 | Audit prep for access reviews is slow and manual | Access Analyzer findings + credential report together generate continuous, exportable evidence | **Audit evidence generation: on-demand**, not a multi-week manual collection exercise |
-| Enterprise IAM experience doesn't obviously "count" toward cloud roles | A direct, artefact-level mapping from Guardium/Tripwire/NatWest practice to AWS IAM controls | Converts 20 years of enterprise IGA experience into cloud-native, interview-ready proof |
+| Enterprise IAM experience doesn't obviously "count" toward cloud roles | A direct, artefact-level mapping from Guardium/Tripwire practice to AWS IAM controls | Converts 20 years of enterprise IGA experience into cloud-native, interview-ready proof |
 
 ---
 
@@ -116,28 +116,28 @@ For hiring managers specifically: this is the project that answers "you don't ha
 
 ## Technical Approach — High‑Level Steps
 - ** Run IAM Access Analyzer
-- Enable Access Analyzer across the AWS account.
-- Collect findings on overly permissive roles, cross‑account access, and risky resource policies.
+* Enable Access Analyzer across the AWS account.
+* Collect findings on overly permissive roles, cross‑account access, and risky resource policies.
 
 - ** Perform Credential Access Review
-- Generate and analyze the AWS Credential Report.
-- Identify inactive users, unused access keys, and missing MFA enforcement.
+* Generate and analyze the AWS Credential Report.
+* Identify inactive users, unused access keys, and missing MFA enforcement.
 
 - ** Design Least‑Privilege IAM Architecture
-- Apply permission boundaries and scoped policies.
-- Remove unused roles and enforce MFA for all users.
+* Apply permission boundaries and scoped policies.
+* Remove unused roles and enforce MFA for all users.
 
 - ** Map Governance Controls
-- Align IAM policies with CIS AWS Foundations, NIST CSF, and ISO 27001 requirements.
-- Document how each control mitigates specific threats (e.g., credential misuse, privilege escalation).
+* Align IAM policies with CIS AWS Foundations, NIST CSF, and ISO 27001 requirements.
+* Document how each control mitigates specific threats (e.g., credential misuse, privilege escalation).
 
 - ** Document Findings & Remediation
-- Create markdown files summarizing Access Analyzer findings (e.g., S3 public access, cross‑account role trust).
-- Provide remediation steps and compliance mapping for each finding.
+* Create markdown files summarizing Access Analyzer findings (e.g., S3 public access, cross‑account role trust).
+* Provide remediation steps and compliance mapping for each finding.
 
 - ** Integrate with Security Dashboard
-- Feed IAM governance findings into the consolidated dashboard.
-- Ensure visibility for recruiters and interviewers to see governance maturity.
+* Feed IAM governance findings into the consolidated dashboard.
+* Ensure visibility for recruiters and interviewers to see governance maturity.
 
 ---
 
@@ -147,8 +147,6 @@ For hiring managers specifically: this is the project that answers "you don't ha
 - **Four roles, not more** — scoped to the access patterns actually needed for this portfolio's threat model (audit, limited build, incident response, compliance-read), not padded to look comprehensive.
 - **Access Analyzer over a manual quarterly review alone** — continuous detection closes the gap between review cycles; the credential report review still runs on a defined cadence for the things Access Analyzer doesn't cover (key age, MFA state).
 - **CloudFormation over Terraform** — consistent with the rest of this portfolio; no state-backend management overhead for a single-account Free Tier build. Terraform equivalents are documented (see Implementation Steps) for teams standardized on it.
-- **Checkov over tfsec for IaC scanning** — this project is CloudFormation-native; `tfsec` is Terraform-specific and wouldn't apply here. Checkov supports both, so it's the honest choice for this stack rather than defaulting to whichever tool is best-known.
-
 ---
 
 ## Security Considerations
@@ -229,10 +227,7 @@ For hiring managers specifically: this is the project that answers "you don't ha
 - [ ] Boundary-violation test executed and denial confirmed (screenshot or CLI output retained)
 - [ ] IAM Access Analyzer enabled; test finding seeded, detected, and remediated
 - [ ] Credential report generated and `credential-report-analysis.md` completed
-- [ ] `enterprise-iam-to-aws-mapping.md` completed — Guardium/Tripwire/NatWest crosswalk
 - [ ] `.github/workflows/validate-p3.yml` created and passing (green check on PR)
-- [ ] Architecture diagram exported to `assets/architecture.png`
-- [ ] Demo recording captured to `assets/demo.gif`
 - [ ] This README completed and committed
 - [ ] Feature branch → PR → CI green → squash-merged into `main`
 
@@ -258,26 +253,6 @@ For hiring managers specifically: this is the project that answers "you don't ha
 - [NIST Cybersecurity Framework 2.0](https://www.nist.gov/cyberframework)
 - [CIS AWS Foundations Benchmark](https://www.cisecurity.org/benchmark/amazon_web_services)
 - [MITRE ATT&CK — Cloud Matrix](https://attack.mitre.org/matrices/enterprise/cloud/)
-- [Checkov Documentation](https://www.checkov.io/1.Welcome/What%20is%20Checkov.html)
-
----
-
-## Appendix / Extras
-
-**Sample test case — boundary denial:**
-```bash
-# Attempt an action outside the boundary's Allow list from SecurityAuditor
-aws iam create-user --user-name test-escalation --profile security-auditor
-# Expected: AccessDenied, even if a broader policy is attached to the role
-```
-
-**Sample demo commands:**
-```bash
-aws sts assume-role --role-arn arn:aws:iam::ACCOUNT_ID:role/SecurityAuditor --role-session-name demo
-aws accessanalyzer list-findings --analyzer-arn YOUR-ANALYZER-ARN --region ap-southeast-1
-```
-
-**Short incident-response note:** if Access Analyzer surfaces an unexpected external-access finding in production, treat it as a P2 by default — confirm scope, remediate the resource policy, and verify the finding resolves before closing. This mirrors the runbook discipline built out fully in [Project 2](../02-detection-pipeline).
 
 ---
 
