@@ -45,7 +45,38 @@ For hiring managers specifically: this is the project that answers "you don't ha
 
 ## Architecture Diagram
 
-import mermaid from 'https://esm.sh/mermaid@11/dist/mermaid.esm.min.mjs'; const dark = matchMedia('(prefers-color-scheme: dark)').matches; await document.fonts.ready; mermaid.initialize({ startOnLoad: false, theme: 'base', fontFamily: '"Anthropic Sans", sans-serif', themeVariables: { darkMode: dark, fontSize: '13px', fontFamily: '"Anthropic Sans", sans-serif', lineColor: dark ? '#9c9a92' : '#73726c', textColor: dark ? '#c2c0b6' : '#3d3d3a', }, }); const src = \`flowchart TB subgraph BOUNDARY\["🔒 Permission Boundary"\] PB\["GovernancePermissionBoundary<br/>Max-permission ceiling for all 4 roles"\] end subgraph ROLES\["👥 Least-Privilege Role Hierarchy"\] SA\["SecurityAuditor<br/>Read-only"\] DEV\["Developer<br/>Limited S3 + CloudWatch"\] IR\["IncidentResponder<br/>Specific IR actions"\] CV\["ComplianceViewer<br/>Config + Audit read-only"\] end subgraph DETECT\["🔍 Continuous Detection &amp; Review"\] AA\["IAM Access Analyzer<br/>External / cross-account findings"\] CR\["Credential Report<br/>Stale keys &middot; MFA gaps &middot; dormant users"\] end subgraph BRIDGE\["🌉 Enterprise Governance Bridge"\] EM\["Enterprise IAM Mapping<br/>Guardium DAM &middot; Tripwire FIM &middot; NatWest IAM &rarr; AWS IAM"\] end PB -->|caps effective access for| ROLES ROLES -.->|monitored by| AA ROLES -.->|credentials reviewed via| CR AA -->|findings feed| EM CR -->|findings feed| EM style BOUNDARY fill:#1F3864,color:#ffffff,stroke:#0d1f38 style ROLES fill:#2E74B5,color:#ffffff,stroke:#1c4a73 style DETECT fill:#BF8F00,color:#ffffff,stroke:#8a6800 style BRIDGE fill:#375623,color:#ffffff,stroke:#22350f\`; try { const { svg } = await mermaid.render('archsvg', src); document.getElementById('arch').innerHTML = svg; } catch (e) { document.getElementById('arch').innerHTML = '<pre style="color:var(--text-danger);white-space:pre-wrap;font-size:12px">' + e.message + '</pre>'; }
+flowchart TB
+  subgraph BOUNDARY["🔒 Permission Boundary"]
+    PB["GovernancePermissionBoundary<br/>Max-permission ceiling for all 4 roles"]
+  end
+
+  subgraph ROLES["👥 Least-Privilege Role Hierarchy"]
+    SA["SecurityAuditor<br/>Read-only"]
+    DEV["Developer<br/>Limited S3 + CloudWatch"]
+    IR["IncidentResponder<br/>Specific IR actions"]
+    CV["ComplianceViewer<br/>Config + Audit read-only"]
+  end
+
+  subgraph DETECT["🔍 Continuous Detection & Review"]
+    AA["IAM Access Analyzer<br/>External / cross-account findings"]
+    CR["Credential Report<br/>Stale keys · MFA gaps · dormant users"]
+  end
+
+  subgraph BRIDGE["🌉 Enterprise Governance Bridge"]
+    EM["Enterprise IAM Mapping<br/>Guardium DAM · Tripwire FIM · NatWest IAM → AWS IAM"]
+  end
+
+  PB -->|caps effective access for| ROLES
+  ROLES -.->|monitored by| AA
+  ROLES -.->|credentials reviewed via| CR
+  AA -->|findings feed| EM
+  CR -->|findings feed| EM
+
+  style BOUNDARY fill:#1F3864,color:#ffffff,stroke:#0d1f38
+  style ROLES fill:#2E74B5,color:#ffffff,stroke:#1c4a73
+  style DETECT fill:#BF8F00,color:#ffffff,stroke:#8a6800
+  style BRIDGE fill:#375623,color:#ffffff,stroke:#22350f
+
 
 ```
                          ┌──────────────────────┐
