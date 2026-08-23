@@ -49,19 +49,19 @@ For hiring managers specifically: this is the project that answers "you don't ha
 ```mermaid
 flowchart TB
     subgraph BOUNDARY["🔒 Permission Boundary"]
-        PB["GovernancePermissionBoundary — Max-permission ceiling for all 4 roles"]
+        PB["GovernancePermissionBoundary - Max-permission ceiling for all 4 roles"]
     end
 
     subgraph ROLES["👥 Least-Privilege Role Hierarchy"]
-        SA["SecurityAuditor — Read-only"]
-        DEV["Developer — Limited S3 + CloudWatch"]
-        IR["IncidentResponder — Specific IR actions"]
-        CV["ComplianceViewer — Config + Audit read-only"]
+        SA["SecurityAuditor - Read-only"]
+        DEV["Developer - Limited S3 + CloudWatch"]
+        IR["IncidentResponder - Specific IR actions"]
+        CV["ComplianceViewer - Config + Audit read-only"]
     end
 
     subgraph DETECT["🔍 Continuous Detection & Review"]
-        AA["IAM Access Analyzer — External / cross-account findings"]
-        CR["Credential Report — Stale keys, MFA gaps, dormant users"]
+        AA["IAM Access Analyzer - External / cross-account findings"]
+        CR["Credential Report - Stale keys, MFA gaps, dormant users"]
     end
 
     subgraph BRIDGE["🌉 Enterprise Governance Bridge"]
