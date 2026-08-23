@@ -245,7 +245,7 @@ flowchart TB
 ---
 
 ## Reference Materials
-
+- [CSA - Top Threats to Cloud Computing in 2026] (https://lnkd.in/eTE_Mgqq)
 - [AWS IAM Permission Boundaries](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html)
 - [IAM Access Analyzer User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html)
 - [IAM Credential Reports](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_getting-report.html)
