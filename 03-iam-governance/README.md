@@ -116,8 +116,8 @@ For hiring managers specifically: this is the project that answers "you don't ha
 
 ## Technical Approach — High‑Level Steps
 - Run IAM Access Analyzer
->>*-* Enable Access Analyzer across the AWS account.
->>*-* Collect findings on overly permissive roles, cross‑account access, and risky resource policies.
+>* Enable Access Analyzer across the AWS account.
+>* Collect findings on overly permissive roles, cross‑account access, and risky resource policies.
 
 - Perform Credential Access Review
 > Generate and analyze the AWS Credential Report.
