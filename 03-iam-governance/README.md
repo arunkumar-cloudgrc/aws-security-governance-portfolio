@@ -49,23 +49,23 @@ For hiring managers specifically: this is the project that answers "you don't ha
 ```mermaid
 flowchart TB
     subgraph BOUNDARY["🔒 Permission Boundary"]
-        PB["GovernancePermissionBoundary<br/>Max-permission ceiling for all 4 roles"]
+        PB["GovernancePermissionBoundary — Max-permission ceiling for all 4 roles"]
     end
 
     subgraph ROLES["👥 Least-Privilege Role Hierarchy"]
-        SA["SecurityAuditor<br/>Read-only"]
-        DEV["Developer<br/>Limited S3 + CloudWatch"]
-        IR["IncidentResponder<br/>Specific IR actions"]
-        CV["ComplianceViewer<br/>Config + Audit read-only"]
+        SA["SecurityAuditor — Read-only"]
+        DEV["Developer — Limited S3 + CloudWatch"]
+        IR["IncidentResponder — Specific IR actions"]
+        CV["ComplianceViewer — Config + Audit read-only"]
     end
 
     subgraph DETECT["🔍 Continuous Detection & Review"]
-        AA["IAM Access Analyzer<br/>External / cross-account findings"]
-        CR["Credential Report<br/>Stale keys · MFA gaps · dormant users"]
+        AA["IAM Access Analyzer — External / cross-account findings"]
+        CR["Credential Report — Stale keys, MFA gaps, dormant users"]
     end
 
     subgraph BRIDGE["🌉 Enterprise Governance Bridge"]
-        EM["Enterprise IAM Mapping<br/>Guardium DAM · Tripwire FIM · NatWest IAM → AWS IAM"]
+        EM["Enterprise IAM Mapping — Guardium DAM, Tripwire FIM, NatWest IAM → AWS IAM"]
     end
 
     PB -->|caps effective access for| ROLES
@@ -78,6 +78,7 @@ flowchart TB
     style ROLES fill:#2E74B5,color:#ffffff,stroke:#1c4a73
     style DETECT fill:#BF8F00,color:#ffffff,stroke:#8a6800
     style BRIDGE fill:#375623,color:#ffffff,stroke:#22350f
+
 
 
 
