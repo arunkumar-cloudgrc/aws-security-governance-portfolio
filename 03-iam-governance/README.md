@@ -78,7 +78,7 @@ flowchart TB
     style ROLES fill:#2E74B5,color:#ffffff,stroke:#1c4a73
     style DETECT fill:#BF8F00,color:#ffffff,stroke:#8a6800
     style BRIDGE fill:#375623,color:#ffffff,stroke:#22350f
-
+```
 
 
 
