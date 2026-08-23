@@ -65,7 +65,7 @@ flowchart TB
     end
 
     subgraph BRIDGE["🌉 Enterprise Governance Bridge"]
-        EM["Enterprise IAM Mapping — Guardium DAM, Tripwire FIM, NatWest IAM → AWS IAM"]
+        EM["Enterprise IAM Mapping → AWS IAM"]
     end
 
     PB -->|caps effective access for| ROLES
@@ -79,39 +79,6 @@ flowchart TB
     style DETECT fill:#BF8F00,color:#ffffff,stroke:#8a6800
     style BRIDGE fill:#375623,color:#ffffff,stroke:#22350f
 ```
-
-
-
-                         ┌──────────────────────┐
-                         │   PERMISSION BOUNDARY           │
-                         │   GovernancePermissionBoundary │
-                         │   (max-permission ceiling)            │
-                         └───────────────┬───── ┘
-                                          │ applied to all 4 roles
-        ┌─────────────────┬──────────────┼──────────────┬─────────────────┐
-        │                 │              │              │                 │
-┌───────▼───────┐ ┌───────▼───────┐ ┌────▼──────────┐ ┌─▼───────────────┐
-│ SecurityAuditor│ │  Developer     │ │IncidentResponder│ │ComplianceViewer │
-│ (read-only)    │ │(S3+CloudWatch) │ │ (IR actions)    │ │(Config+Audit RO)│
-└───────┬────────┘ └───────┬────────┘ └────┬────────────┘ └─┬───────────────┘
-        │                  │                │                 │
-        └──────────────────┴────────┬───────┴─────────────────┘
-                                     │
-                    ┌────────────────▼──────┐
-                    │   IAM ACCESS ANALYZER                 │
-                    │   Continuous external/cross-account  │
-                    │   resource-policy evaluation               │
-                    └────────────────┬───────┘
-                                     │
-                    ┌────────────────▼──────┐
-                    │   CREDENTIAL REPORT REVIEW      │
-                    │   Stale keys · MFA gaps · dormant     │
-                    │   users — quarterly-cadence review   │
-                    └────────────────────────┘
-   
-```
-*Full-resolution diagram: `assets/architecture.png` — layered view showing the permission boundary, the four roles, Access Analyzer's continuous evaluation loop, and the credential-review cadence.*
-
 ---
 
 ## Project Structure / Flow
