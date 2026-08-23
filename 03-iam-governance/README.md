@@ -120,24 +120,24 @@ For hiring managers specifically: this is the project that answers "you don't ha
 >* Collect findings on overly permissive roles, cross‑account access, and risky resource policies.
 
 - Perform Credential Access Review
-> Generate and analyze the AWS Credential Report.
-> Identify inactive users, unused access keys, and missing MFA enforcement.
+>* Generate and analyze the AWS Credential Report.
+>* Identify inactive users, unused access keys, and missing MFA enforcement.
 
-- ** Design Least‑Privilege IAM Architecture
-* Apply permission boundaries and scoped policies.
-* Remove unused roles and enforce MFA for all users.
+- Design Least‑Privilege IAM Architecture
+>* Apply permission boundaries and scoped policies.
+>* Remove unused roles and enforce MFA for all users.
 
-- ** Map Governance Controls
-* Align IAM policies with CIS AWS Foundations, NIST CSF, and ISO 27001 requirements.
-* Document how each control mitigates specific threats (e.g., credential misuse, privilege escalation).
+- Map Governance Controls
+>* Align IAM policies with CIS AWS Foundations, NIST CSF, and ISO 27001 requirements.
+>* Document how each control mitigates specific threats (e.g., credential misuse, privilege escalation).
 
-- ** Document Findings & Remediation
-* Create markdown files summarizing Access Analyzer findings (e.g., S3 public access, cross‑account role trust).
-* Provide remediation steps and compliance mapping for each finding.
+- Document Findings & Remediation
+>* Create markdown files summarizing Access Analyzer findings (e.g., S3 public access, cross‑account role trust).
+>* Provide remediation steps and compliance mapping for each finding.
 
-- ** Integrate with Security Dashboard
-* Feed IAM governance findings into the consolidated dashboard.
-* Ensure visibility for recruiters and interviewers to see governance maturity.
+- Integrate with Security Dashboard
+>* Feed IAM governance findings into the consolidated dashboard.
+>* Ensure visibility for recruiters and interviewers to see governance maturity.
 
 ---
 
