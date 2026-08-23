@@ -1,22 +1,9 @@
-# 🔐 Identity Governance & Access Analysis — Advancing AWS Security Beyond Baseline & Detectionyes
+# 🔐 Identity Governance & Access Analysis — Advancing AWS Security Beyond Baseline & Detection
 ### Project 3 of 4 — AWS Cloud Security Governance Portfolio
-
-![AWS](https://img.shields.io/badge/AWS-Free%20Tier-FF9900?logo=amazonaws&logoColor=white)
-![IaC](https://img.shields.io/badge/Infrastructure-as%20Code-blue)
-![CI](https://img.shields.io/badge/CI-cfn--lint%20%2B%20Checkov-brightgreen)
-![Frameworks](https://img.shields.io/badge/Frameworks-13%20mapped-informational)
-![IAM](https://img.shields.io/badge/Focus-Least--Privilege%20IAM-critical)
-![Status](https://img.shields.io/badge/status-portfolio%20project-lightgrey)
 
 > **TL;DR:** A four-role least-privilege IAM architecture with continuous external-access detection and a quarterly-style credential audit — the same identity-governance discipline I ran for 20 years via IBM Guardium and Tripwire, rebuilt natively on AWS IAM.
 
-I designed and deployed a least-privilege IAM governance layer — permission-boundary-capped roles, IAM Access Analyzer for external-access detection, and a structured credential-hygiene review — then documented the direct bridge between this and 20 years of enterprise identity governance (IBM Guardium DAM, Tripwire FIM, NatWest IAM controls). The result: a cloud IAM estate where every role has a documented purpose, every external-access path is continuously detected rather than periodically guessed at, and every control traces to a named clause across 13 global frameworks — the exact evidence a Cloud Security Architect or Governance Lead interview is actually testing for.
-
----
-
-## Project Title
-
-**IAM Governance & Access Analysis — Least-Privilege AWS Identity Architecture with Continuous Access Review**
+I designed and deployed a least-privilege IAM governance layer — permission-boundary-capped roles, IAM Access Analyzer for external-access detection, and a structured credential-hygiene review — then documented the direct bridge between this and 20 years of enterprise identity governance (IBM Guardium DAM, Tripwire FIM, IAM controls). The result: a cloud IAM estate where every role has a documented purpose, every external-access path is continuously detected rather than periodically guessed at, and every control traces to a named clause across 13 global frameworks — the exact evidence a Cloud Security Architect or Governance Lead interview is actually testing for.
 
 ---
 
@@ -24,9 +11,7 @@ I designed and deployed a least-privilege IAM governance layer — permission-bo
 
 Most AWS breaches don't start with a zero-day — they start with an over-permissioned role, a stale access key, or a resource-based policy nobody reviewed after it was written. This project builds the governance layer that catches all three, continuously, rather than relying on someone remembering to check.
 
-It deploys a four-role least-privilege IAM hierarchy (`SecurityAuditor`, `Developer`, `IncidentResponder`, `ComplianceViewer`), each capped by a permission boundary so the effective access is never wider than the role's actual job. On top of that baseline, **IAM Access Analyzer** runs continuously to catch any resource-based policy that unintentionally grants external or cross-account access, and a structured **credential report review** — modelled explicitly on the quarterly access-certification cycles I ran through IBM Guardium and Tripwire FIM at NatWest — flags dormant users, stale keys, and MFA gaps on a defined cadence rather than an ad hoc one.
-
-The project closes with the artefact I consider the most differentiated in this entire portfolio: a document that maps 20 years of enterprise identity-governance discipline directly onto native AWS IAM controls, control by control, not as a vague "transferable skills" claim but as a literal crosswalk a hiring panel can follow line by line.
+It deploys a four-role least-privilege IAM hierarchy (`SecurityAuditor`, `Developer`, `IncidentResponder`, `ComplianceViewer`), each capped by a permission boundary so the effective access is never wider than the role's actual job. On top of that baseline, **IAM Access Analyzer** runs continuously to catch any resource-based policy that unintentionally grants external or cross-account access, and a structured **credential report review**.
 
 ---
 
@@ -44,7 +29,7 @@ The project closes with the artefact I consider the most differentiated in this 
 
 ## Why It's Important
 
-Identity is the #2-ranked cloud threat category industry-wide (Cloud Security Alliance, *Top Threats to Cloud Computing*, 2024) — and unlike a network perimeter, there is no single control that fixes it. It requires structural prevention (permission boundaries), continuous detection (Access Analyzer), and periodic hygiene review (credential reports) working together. This project demonstrates all three, and — critically for a governance-track candidate — demonstrates the *audit discipline* around them: every finding is logged, every control is mapped to a framework clause, and every claim is stated at the confidence level it actually deserves.
+Identity is the #1-ranked cloud threat category industry-wide (Cloud Security Alliance, *Top Threats to Cloud Computing*, 2026) — and unlike a network perimeter, there is no single control that fixes it. It requires structural prevention (permission boundaries), continuous detection (Access Analyzer), and periodic hygiene review (credential reports) working together. This project demonstrates all three, and — critically for a governance-track candidate — demonstrates the *audit discipline* around them: every finding is logged, every control is mapped to a framework clause, and every claim is stated at the confidence level it actually deserves.
 
 For hiring managers specifically: this is the project that answers "you don't have direct cloud IAM experience — why should I trust you with our access model?" with a control-by-control equivalence to enterprise IGA practice, not an assertion of transferability.
 
@@ -55,20 +40,17 @@ For hiring managers specifically: this is the project that answers "you don't ha
 - **Four-role least-privilege IAM hierarchy** — `SecurityAuditor`, `Developer`, `IncidentResponder`, `ComplianceViewer` — each governed by a shared permission boundary
 - **IAM Access Analyzer** — account-level analyzer with a deliberately-seeded test finding to prove detection actually works, not just that it's enabled
 - **IAM credential report analysis** — a professional access-review document (executive summary, methodology, findings table, remediation actions) styled as a formal quarterly access-certification review
-- **Enterprise IAM Governance → AWS IAM mapping document** — the flagship artefact bridging IBM Guardium DAM, Tripwire FIM, and NatWest enterprise IAM controls to native AWS services
 - **GitHub Actions CI** — `cfn-lint` + `checkov` validation on every push/PR touching this project
-- **Demo walkthrough** — a recorded or live demonstration of a boundary-denied action and a live Access Analyzer finding (see [Appendix](#appendix--extras))
-
 ---
 
 ## Architecture Diagram
 
 ```
-                         ┌────────────────────────────┐
-                         │   PERMISSION BOUNDARY        │
-                         │   GovernancePermissionBoundary│
-                         │   (max-permission ceiling)     │
-                         └───────────────┬────────────────┘
+                         ┌──────────────────────┐
+                         │   PERMISSION BOUNDARY           │
+                         │   GovernancePermissionBoundary │
+                         │   (max-permission ceiling)            │
+                         └───────────────┬───── ┘
                                           │ applied to all 4 roles
         ┌─────────────────┬──────────────┼──────────────┬─────────────────┐
         │                 │              │              │                 │
@@ -79,23 +61,18 @@ For hiring managers specifically: this is the project that answers "you don't ha
         │                  │                │                 │
         └──────────────────┴────────┬───────┴─────────────────┘
                                      │
-                    ┌────────────────▼─────────────────┐
-                    │   IAM ACCESS ANALYZER               │
+                    ┌────────────────▼──────┐
+                    │   IAM ACCESS ANALYZER                 │
                     │   Continuous external/cross-account  │
-                    │   resource-policy evaluation          │
-                    └────────────────┬─────────────────┘
+                    │   resource-policy evaluation               │
+                    └────────────────┬───────┘
                                      │
-                    ┌────────────────▼─────────────────┐
-                    │   CREDENTIAL REPORT REVIEW           │
+                    ┌────────────────▼──────┐
+                    │   CREDENTIAL REPORT REVIEW      │
                     │   Stale keys · MFA gaps · dormant     │
-                    │   users — quarterly-cadence review     │
-                    └────────────────┬─────────────────┘
-                                     │
-                    ┌────────────────▼─────────────────┐
-                    │   ENTERPRISE IAM MAPPING DOCUMENT    │
-                    │   Guardium DAM · Tripwire FIM ·       │
-                    │   NatWest IAM → native AWS IAM         │
-                    └───────────────────────────────────┘
+                    │   users — quarterly-cadence review   │
+                    └────────────────────────┘
+   
 ```
 *Full-resolution diagram: `assets/architecture.png` — layered view showing the permission boundary, the four roles, Access Analyzer's continuous evaluation loop, and the credential-review cadence.*
 
@@ -137,125 +114,30 @@ For hiring managers specifically: this is the project that answers "you don't ha
 
 ---
 
-## Implementation Steps
+## Technical Approach — High‑Level Steps
+- ** Run IAM Access Analyzer
+- Enable Access Analyzer across the AWS account.
+- Collect findings on overly permissive roles, cross‑account access, and risky resource policies.
 
-### 1. Deploy the four-role IAM hierarchy
+- ** Perform Credential Access Review
+- Generate and analyze the AWS Credential Report.
+- Identify inactive users, unused access keys, and missing MFA enforcement.
 
-```bash
-aws cloudformation deploy \
-  --template-file 03-iam-governance/cloudformation/iam-governance.yaml \
-  --stack-name portfolio-iam-governance \
-  --capabilities CAPABILITY_NAMED_IAM \
-  --region ap-southeast-1
-```
+- ** Design Least‑Privilege IAM Architecture
+- Apply permission boundaries and scoped policies.
+- Remove unused roles and enforce MFA for all users.
 
-**Sample CloudFormation — permission boundary + one role (full template covers all four):**
-```yaml
-Resources:
-  GovernancePermissionBoundary:
-    Type: AWS::IAM::ManagedPolicy
-    Properties:
-      ManagedPolicyName: GovernancePermissionBoundary
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Action: [s3:GetObject, s3:ListBucket, cloudwatch:GetMetricData, logs:GetLogEvents]
-            Resource: '*'
+- ** Map Governance Controls
+- Align IAM policies with CIS AWS Foundations, NIST CSF, and ISO 27001 requirements.
+- Document how each control mitigates specific threats (e.g., credential misuse, privilege escalation).
 
-  SecurityAuditorRole:
-    Type: AWS::IAM::Role
-    Properties:
-      RoleName: SecurityAuditor
-      PermissionsBoundary: !Ref GovernancePermissionBoundary
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal: { AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root' }
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/SecurityAudit
-        - arn:aws:iam::aws:policy/ReadOnlyAccess
-```
+- ** Document Findings & Remediation
+- Create markdown files summarizing Access Analyzer findings (e.g., S3 public access, cross‑account role trust).
+- Provide remediation steps and compliance mapping for each finding.
 
-**Equivalent Terraform** *(if your environment standardizes on Terraform instead of CloudFormation)*:
-```hcl
-resource "aws_iam_policy" "governance_permission_boundary" {
-  name = "GovernancePermissionBoundary"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect   = "Allow"
-      Action   = ["s3:GetObject", "s3:ListBucket", "cloudwatch:GetMetricData", "logs:GetLogEvents"]
-      Resource = "*"
-    }]
-  })
-}
-
-resource "aws_iam_role" "security_auditor" {
-  name                 = "SecurityAuditor"
-  permissions_boundary = aws_iam_policy.governance_permission_boundary.arn
-  assume_role_policy    = data.aws_iam_policy_document.assume_role.json
-}
-```
-
-### 2. Enable IAM Access Analyzer and seed a test finding
-
-```bash
-aws accessanalyzer create-analyzer \
-  --analyzer-name governance-access-analyzer \
-  --type ACCOUNT --region ap-southeast-1
-
-aws accessanalyzer list-findings \
-  --analyzer-arn YOUR-ANALYZER-ARN --region ap-southeast-1
-```
-To prove detection actually works rather than just being enabled, seed a deliberate test finding: attach a bucket policy granting access to a fake external account ID (e.g. `111111111111`) to one throwaway test bucket, confirm Access Analyzer flags it within minutes, then remediate and confirm the finding resolves.
-
-### 3. Generate and review the credential report
-
-```bash
-aws iam generate-credential-report
-aws iam get-credential-report --query Content --output text | base64 -d > credential-report.csv
-```
-Review `password_last_used`, `access_key_*_last_used_date`, and `mfa_active`. Flag keys unused/unrotated >90 days as stale, `password_enabled=true` with `mfa_active=false` as an MFA gap, and any user with no login for >90 days as dormant.
-
----
-
-## CI/CD and Testing
-
-**GitHub Actions jobs:**
-- `lint-cloudformation` — `cfn-lint` against every template in `cloudformation/`
-- `scan-iac-security` — `checkov` policy-as-code scan (CloudFormation-native, the practical equivalent of `tfsec` for a Terraform-based repo)
-
-```yaml
-name: Validate P3 - IAM Governance
-on:
-  push:
-    paths: ['03-iam-governance/**']
-  pull_request:
-    paths: ['03-iam-governance/**']
-jobs:
-  lint-cloudformation:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install cfn-lint
-        run: pip install cfn-lint
-      - name: Lint CloudFormation templates
-        run: cfn-lint 03-iam-governance/cloudformation/*.yaml
-
-  scan-iac-security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run Checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: 03-iam-governance/cloudformation/
-          framework: cloudformation
-```
-*No AWS credentials are stored in CI — both jobs perform static analysis only, consistent with every workflow across this portfolio.*
+- ** Integrate with Security Dashboard
+- Feed IAM governance findings into the consolidated dashboard.
+- Ensure visibility for recruiters and interviewers to see governance maturity.
 
 ---
 
@@ -408,19 +290,4 @@ aws accessanalyzer list-findings --analyzer-arn YOUR-ANALYZER-ARN --region ap-so
 | **3** | **IAM Governance & Access Analysis** *(this repo)* | Least-privilege IAM, Access Analyzer, enterprise-IAM bridge |
 | 4 | AI Governance Framework (Bedrock) | AI risk register, guardrails policy, EU AI Act / ISO 42001 mapping |
 
-**Author:** Arun Kumar — Cloud Security & IAM Professional, 20 years enterprise security (IBM Guardium DAM, Tripwire FIM, enterprise IAM governance) transitioning into Cloud Security Architect / Cloud Governance Lead roles.
-
----
-
-## Contribution
-
-This is a personal portfolio project and not currently open for external contributions. Feedback and suggestions are welcome via GitHub Issues.
-
-## License
-
-MIT License — see `LICENSE` for details.
-
-## Contact
-
-**Arun Kumar** — Cloud Security & IAM | CCSP | Singapore
-[LinkedIn](https://linkedin.com/in/YOUR-PROFILE) · [GitHub](https://github.com/YOUR-USERNAME)
+**Author:** Arunkumar Devaraj ; Cloud Security Architect | IAM & Governance | CCSP, 12 years enterprise security (IBM Guardium DAM, Tripwire FIM, enterprise IAM governance) transitioning into Cloud Security Architect / Cloud Governance Lead roles.
