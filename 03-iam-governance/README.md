@@ -45,6 +45,35 @@ For hiring managers specifically: this is the project that answers "you don't ha
 
 ## Architecture Diagram
 
+%% Sample Mermaid diagram for Identity Governance & Access Analysis
+%% Replace this block with the exact Mermaid code extracted from your HTML file.
+flowchart LR
+  subgraph AWS_Account["AWS Account"]
+    direction TB
+    IAM_Roles[IAM Roles (SecurityAuditor, Developer, IncidentResponder, ComplianceViewer)]
+    PermissionBoundary[Permission Boundary]
+    AccessAnalyzer[IAM Access Analyzer]
+    CredentialReport[Credential Report Review]
+    EnterpriseDocs[Enterprise Mapping Docs]
+  end
+
+  IAM_Roles --> PermissionBoundary
+  IAM_Roles --> AccessAnalyzer
+  AccessAnalyzer --> CredentialReport
+  CredentialReport --> EnterpriseDocs
+
+  subgraph GovernanceDashboard["Governance Dashboard"]
+    direction LR
+    DashboardCharts[Charts & Risk Insights]
+    Alerts[Alert Notifications]
+    Findings[Findings & Remediation]
+  end
+
+  AccessAnalyzer --> GovernanceDashboard
+  CredentialReport --> GovernanceDashboard
+  EnterpriseDocs --> GovernanceDashboard
+
+
 ```
                          ┌──────────────────────┐
                          │   PERMISSION BOUNDARY           │
@@ -166,7 +195,7 @@ For hiring managers specifically: this is the project that answers "you don't ha
 | Permission boundary enforcement | `GovernancePermissionBoundary` managed policy | NIST SP 800-53 AC-2/AC-3; CIS AWS Foundations Benchmark (IAM section, intent-level) |
 | Continuous external-access detection | IAM Access Analyzer | NIST CSF 2.0 PROTECT: PR.AA; AWS Well-Architected Security Pillar — SEC03 |
 | Credential lifecycle review | `credential-report-analysis.md` | NIST SP 800-53 IA-5; CIS AWS Foundations Benchmark — credential rotation controls |
-| Enterprise-to-cloud IAM governance bridge | `enterprise-iam-to-aws-mapping.md` | ISO/IEC 27001 Annex A 5.15–5.18; MAS TRM §9.1/§9.3 |
+| Enterprise-to-cloud IAM governance bridge | `enterprise-iam-to-aws-mapping.md` | ISO/IEC 27001 Annex A 5.15–5.18; MAS TRM 9.1/9.3 |
 
 <details>
 <summary><strong>Extended mapping — remaining portfolio standards</strong></summary>
@@ -180,8 +209,6 @@ For hiring managers specifically: this is the project that answers "you don't ha
 | ISO 27002 | 5.15–5.18, 8.2 privileged access | 4-role least-privilege hierarchy |
 | ISO 27017 | CLD.9.5 cloud-specific access segregation | Role separation across the cloud control plane |
 | ISO 27018 | Access control to PII by cloud personnel | Credential report review flags PII-adjacent access |
-| MAS FEAT / NIST AI RMF / ISO 42001 / EU AI Act | Not applicable | No AI system in scope for this project |
-
 </details>
 
 ---
