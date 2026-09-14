@@ -1,0 +1,15 @@
+name: Validate P3 - IAM Governance
+on:
+  push:
+    paths: ['03-iam-governance/**']
+  pull_request:
+    paths: ['03-iam-governance/**']
+jobs:
+  cfn-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install cfn-lint
+        run: pip install cfn-lint
+      - name: Lint CloudFormation templates
+        run: cfn-lint 03-iam-governance/cloudformation/*.yaml
