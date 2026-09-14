@@ -225,12 +225,12 @@ Twenty years of enterprise security governance transfers to AI more directly tha
 ---
 
 <details>
-<summary><strong>📁 Full 44-Artefact Ledger</strong> — 3 Valid · 13 Needs Extension · 28 Recreated</summary>
+<summary><strong>📁 Full 44-Artefact Ledger</strong>
 
 Three `Valid` out of forty-four means a mature enterprise control estate transferred almost nothing directly to a high-risk AI deployment. That's not a criticism of the estate — it's the measurable cost of the obligation set.
 
 | ID | Artefact | Phase |
-|---|---|---|---|
+|---|---|---|
 | A-01 | AI Use Case Inventory | 1 | 
 | A-02 | AI System Inventory Record | 1, 6 | 
 | A-03 | AI Risk Classification | 1 |
