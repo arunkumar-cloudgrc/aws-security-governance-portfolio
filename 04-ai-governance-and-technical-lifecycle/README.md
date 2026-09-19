@@ -208,7 +208,7 @@ Because it determines which explainability techniques are legitimate. SHAP needs
 Because a threshold set afterwards isn't a threshold, it's a rationalisation. 0.80 was written down first specifically so the 0.67 result couldn't be argued down as "small" when the deadline pressure arrived — and that's exactly what was attempted.
 
 **3. How do you justify accepting residual risk?**
-Seven risks remain open because they only materialise in production and are managed by measurement with named thresholds and escalation. The one *accepted* residual risk names an individual accepting role, not the committee — a risk accepted collectively is a risk nobody owns.
+Twelve risks remain open because they only materialise in production and are managed by measurement with named thresholds and escalation. The one *accepted* residual risk names an individual accepting role, not the committee — a risk accepted collectively is a risk nobody owns.
 
 **4. Your maturity score is 2.6/5. Why publish that?**
 It's the correct number for a framework proven on one system over eight months, and independent assurance scores 1/5 because Internal Audit hasn't passed. A framework claiming 4s across the board is telling you the assessor had no incentive to find anything.
