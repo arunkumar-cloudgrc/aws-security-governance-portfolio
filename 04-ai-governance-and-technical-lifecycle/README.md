@@ -1,9 +1,9 @@
 # 🧭 AI Governance for Credit Decisioning — Governing a High-Risk AI System End to End
 
-> **Role:** AI Governance Lead & Principal AI Architect (design authority)
+> **Portfolio role:** AI Governance Lead / Governance Design Authority
 > **System:** Credit Decisioning Assistant — hybrid deterministic scoring layer + RAG narration layer on Amazon Bedrock
-> **Signature outcome:** Blocked Gate 2 on a disparate impact ratio of **0.67**; released at **0.89** after structural remediation
-> **Scale:** 44 governance artefacts · 20 tracked risks · 18 failure modes · ~870,000 annual retail applicants
+> **Worked-scenario outcome:** Gate 2 blocks at a disparate impact ratio of **0.67** and clears at **0.89** after structural remediation
+> **Scale:** 44 governance artefacts · 20 tracked risks · 18 failure modes · scenario sizing assumption of ~870,000 annual retail applicants
 > **Lifecycle:** Five stage gates, dual-track — no technical milestone advances without its governance gate closing
 > **Regimes:** EU AI Act Annex III(5)(b) high-risk · MAS TRM & FEAT · Singapore PDPA · GDPR Art.22
 
@@ -14,9 +14,9 @@
 - **Designed the dual-track operating model** — six lifecycle phases, five stage gates, 7 technical steps mapped to 15 parallel governance steps. Governance sequenced *ahead* of each phase rather than reviewing it afterwards.
 - **Made the scoring/narration layer separation an explicit governance control.** The narration layer never produces the score — which is what keeps SHAP attribution valid, the GDPR Art.22 position defensible, and a deterministic fallback possible.
 - **Introduced pre-declared fairness thresholds** and authored the mandatory proxy-attribute inference prompt (**Q2.4**: *"what can be inferred from this field that we do not intend to use?"*) as a blocking pre-ingestion question.
-- **Blocked Gate 2** three weeks from a committed date, drove root-cause analysis into retrieval metadata, and **retained the block record permanently above its release record**.
-- **Specified IAM permission-layer enforcement** with a demonstrated denial captured as evidence — no application code path reaches either model ungoverned.
-- **Established that 71% of controls are effectiveness-tested**, with the remaining 29% recorded as configuration-only rather than presented as assured.
+- **Modelled a Gate 2 block** three weeks before the scenario delivery date, designed the root-cause path into retrieval metadata, and **required the block record to remain permanently above its later release record**.
+- **Specified IAM permission-layer enforcement** with a demonstrated denial required as pre-release evidence, plus a governed exception path — ordinary application code cannot invoke either model outside the approved control set.
+- **Defined effectiveness-testing methods for 12 of 17 controls (71%)**; four are configuration-only and one is constrained/not implemented, rather than presenting design-time controls as operationally assured.
 - **Built the 44-artefact ledger** with honest `Valid` / `Needs Extension` / `Recreated` status (3 / 13 / 28) and reported that ratio as a governance finding.
 
 ---
@@ -37,7 +37,7 @@ An AI Governance Lead is accountable for what must be true *before* the engineer
 |---|---|---|
 | Adverse-action letters too generic to defend under challenge | SHAP names the specific driver; mandatory passage-level citation ties it to a policy clause | A-19 Model Card · A-37 Recourse Procedure |
 | Bias entering through surfaces model review doesn't inspect | Counterfactual pair testing, thresholds declared **before** execution; retrieval metadata treated as an input surface | A-15 Bias Testing Report · Q2.4 in A-08 |
-| Deployments proceed because nobody can stop them | Five gates, named approvers, four-eyes rule enforced by automated check | A-28 Gate Approval Log — **1 gate blocked, 2 use cases rejected** |
+| Deployments proceed because nobody can stop them | Five gates, named approvers, four-eyes rule enforced by automated check | A-28 Gate Approval Log — **worked scenario: 1 gate blocked, 2 use cases rejected** |
 | Model risk invisible to a generative-only lens | 18 failure modes across both layers; 5 scoring-layer risks with named detection paths | A-09 Risk Register · A-10 FMEA |
 | Conflicting obligations across four regimes | One control set mapped to 13 frameworks, divergences stated not absorbed | A-24 Compliance Tracker |
 | Artefacts exist but evidence can't be traced to a decision | 44 artefacts with ID, version, accountable role, cross-references | MASTER_Artifact_Index.xlsx — **44/44, zero stale references** |
@@ -48,34 +48,39 @@ An AI Governance Lead is accountable for what must be true *before* the engineer
 
 ```mermaid
 flowchart LR
-    A["👤 Applicant<br/>~870k/yr"] --> ORC["🔶 Orchestration<br/><i>deterministic ·<br/>no agentic surface</i>"]
+    A["👤 Applicant<br/><i>scenario population</i>"] --> ORC["🔶 Orchestration<br/><i>deterministic ·<br/>no agentic surface</i>"]
 
     ORC --> SCORE["🔵 <b>SCORING LAYER</b><br/>Gradient-boosted model<br/><b>MAKES THE DECISION</b><br/>score + SHAP drivers"]
-    ORC --> RET["🟢 RAG Retrieval<br/>policy corpus<br/><i>version-pinned + hashed</i>"]
+    ORC --> IN["🔴 Input Guardrail<br/><i>direct injection · denied topics · PII</i>"]
+    IN --> RET["🟢 RAG Retrieval<br/>approved policy corpus<br/><i>version-pinned + hashed</i>"]
+    RET --> RGC["🔴 Retrieved-Content Guardrail<br/><i>indirect injection · PII · poisoning checks</i>"]
 
-    SCORE --> GUARD
-    RET --> GUARD
+    SCORE --> NAR
+    RGC --> NAR["🟣 Narration Layer<br/>Amazon Bedrock<br/><b>ONLY EXPLAINS</b><br/><i>never produces the score</i>"]
 
-    GUARD["🔴 IAM GUARDRAILS<br/>permission-layer enforced<br/>6 controls · no bypass path<br/>grounding ≥ 0.75 block-on-fail"]
-
-    GUARD --> NAR["🟣 Narration Layer<br/>Amazon Bedrock<br/><b>ONLY EXPLAINS</b><br/><i>never produces the score</i>"]
-
-    NAR --> HITL{"Human-in-the-Loop"}
-    HITL -->|"marginal · adverse action ·<br/>low confidence · thin file"| SR["Senior Underwriter<br/><i>mandatory escalation</i>"]
+    NAR --> OUT["🔴 Output Guardrail<br/><i>grounding ≥ 0.75 block-on-fail<br/>PII redaction before return + log</i>"]
+    OUT --> HITL{"Human-in-the-Loop"}
+    HITL -->|"marginal · adverse action ·<br/>low confidence · thin file · policy gap"| SR["Senior Underwriter<br/><i>mandatory escalation</i>"]
     HITL -->|"standard"| UW["Underwriter<br/>4 mandatory checks"]
 
-    GUARD -.->|"grounding fail ·<br/>latency breach"| CB["⚡ Circuit breaker<br/><i>narration suppressed,<br/>score still served</i>"]
+    IAM["🔐 IAM Enforcement<br/><i>permission-layer control set<br/>governed exception path</i>"] -.-> SCORE
+    IAM -.-> NAR
+
+    OUT -.->|"grounding fail ·<br/>latency breach · retrieval down"| CB["⚡ Circuit breaker<br/><i>narration suppressed,<br/>score + SHAP still available</i>"]
     CB -.-> UW
 
     SR --> DEC["Decision + adverse<br/>action + recourse"]
     UW --> DEC
-    DEC --> VAULT["🗄️ AUDIT VAULT<br/>prompt · citations · control trace<br/>both model versions<br/>Object Lock · 7 years"]
+    DEC --> VAULT["🗄️ AUDIT VAULT<br/>prompt · citations · control trace<br/>model/prompt/corpus versions<br/>Object Lock · 7 years"]
 
     style SCORE fill:#BDD7EE,stroke:#1F4E79,stroke-width:4px
     style NAR fill:#E4DFEC,stroke:#5B2C87,stroke-width:2px
-    style GUARD fill:#F8CBAD,stroke:#9C0006,stroke-width:3px
+    style IN fill:#F8CBAD,stroke:#9C0006,stroke-width:2px
+    style RGC fill:#F8CBAD,stroke:#9C0006,stroke-width:2px
+    style OUT fill:#F8CBAD,stroke:#9C0006,stroke-width:2px
     style RET fill:#E2EFDA,stroke:#375623,stroke-width:2px
     style ORC fill:#FFF2CC,stroke:#BF8F00,stroke-width:2px
+    style IAM fill:#D9EAF7,stroke:#1F4E79,stroke-width:2px
     style VAULT fill:#F2F2F2,stroke:#44546A,stroke-width:2px
     style CB fill:#FFE699,stroke:#BF8F00,stroke-width:2px
 ```
@@ -90,15 +95,16 @@ flowchart LR
 |---|---|---|
 | Governance artefacts | **44 / 44** present, 0 stale references | Master index reconciliation, verified programmatically |
 | Tracked enterprise risks | **20** (R-01 to R-20) | A-09, cross-traced to FMEA |
+| Open risk position | **12 of 20** open by design — 9 monitored, 2 active, 1 accepted | A-09 SUMMARY-DASHBOARD; open by design because they materialise only in operation |
 | Analysed failure modes | **18** (FM-01 to FM-18) | A-10, both architectural layers |
-| Affected population | **~870,000** annual retail applicants | A-05, incl. vulnerable and thin-file cohorts |
-| Fairness remediation | **DIR 0.67 → 0.89** | Counterfactual pair testing, threshold pre-declared |
-| Stage gates | **5** — 1 blocked, 0 bypassed | A-28 |
-| Control assurance | **71% effectiveness-tested** | A-39 CONTROL-INDEX + A-11 VERIFICATION tab |
+| Scenario population | **~870,000** annual retail applicants | Design assumption used for sizing/risk-tier analysis; not a measured production population |
+| Worked fairness scenario | **DIR 0.67 → 0.89** | Simulated counterfactual pair testing; threshold pre-declared |
+| Stage gates | **5** — worked scenario records 1 block, 0 bypasses | A-28 |
+| Control test design | **71% (12/17) specified for effectiveness testing** | A-39 CONTROL-INDEX + A-11 VERIFICATION tab; 4 configuration-only, 1 constrained/not implemented |
 | Governance maturity | **2.6 / 5** (self-assessment) | A-43, 15 dimensions |
-| Independent assurance | **1 / 5** — lowest score in the set | Internal Audit has not completed a pass |
+| Independent assurance | **1 / 5** — lowest score in the set | No independent audit evidence exists |
 
-> The two figures I'd lead with are the uncomfortable ones. **Until a third line has tested this, the framework is a statement of what it intends, verified by its author** — and that qualifies every other score above it.
+> The uncomfortable figures matter most. **Until independent assurance tests this, the framework remains a design statement verified by its author rather than proof of production operating effectiveness** — and that qualifies every other score above it.
 
 ---
 
@@ -107,10 +113,10 @@ flowchart LR
 ```mermaid
 flowchart LR
     G1["<b>GATE 1</b><br/>Charter &<br/>Risk Appetite<br/><i>AIGC + Legal</i>"]
-    G2["<b>GATE 2</b><br/>Data & Privacy<br/>🚫 <b>BLOCKED 11 DAYS</b><br/><i>DPO + AI-CoE</i>"]
+    G2["<b>GATE 2</b><br/>Data & Privacy<br/>🚫 <b>WORKED SCENARIO: BLOCKED</b><br/><i>DPO + AI-CoE</i>"]
     G3["<b>GATE 3</b><br/>Architecture<br/>& Ethics<br/><i>AIEC + CRO</i>"]
     G4["<b>GATE 4</b><br/>Security, Safety<br/>& Fairness<br/><i>Model Risk + CISO</i>"]
-    G5["<b>GATE 5</b><br/>Production<br/>Go-Live<br/><i>AIGC + Bus. Owner</i>"]
+    G5["<b>GATE 5</b><br/>Bounded Release<br/>Authorisation (scenario)<br/><i>AIGC + Bus. Owner</i>"]
     MON["♻️ <b>CONTINUOUS MONITORING</b><br/>drift · calibration · fairness<br/>override band · latency"]
 
     G1 ==> G2 ==> G3 ==> G4 ==> G5 ==> MON
@@ -130,11 +136,11 @@ flowchart LR
 
 | Gate | Decision it answers | Authority | Outcome |
 |---|---|---|---|
-| **1** Charter & Risk Appetite | Permissible? At what tier? Can we operate it? | AIGC Chair + Legal | ✅ Approved as high-risk, dissent recorded. 2 other use cases rejected |
-| **2** Data & Privacy | What data grounds it, and what can it infer? | DPO + AI-CoE | 🚫 **BLOCKED at 0.67** → ✅ released at 0.89, 11 days |
-| **3** Architecture & Ethics | Layer separation, HITL triggers, vendor obligations | AIEC Chair + CRO | ✅ Approved. No-agentic-surface recorded as a design decision |
-| **4** Security, Safety & Fairness | Both layers evaluated? Adversarially tested? | Head of Model Risk + CISO | ✅ Approved. GDR-06 recorded *Constrained*, not *Outstanding* |
-| **5** Production Go-Live | May it carry traffic, at what scope, stoppable by whom? | AIGC + accountable business owner | ✅ Approved, **bounded at 500 applications** |
+| **1** Charter & Risk Appetite | Permissible? At what tier? Can we operate it? | AIGC Chair + Legal | Worked scenario: approved as high-risk, dissent recorded; 2 other use cases rejected |
+| **2** Data & Privacy | What data grounds it, and what can it infer? | DPO + AI-CoE | Worked scenario: 🚫 **block at 0.67** → ✅ clear at 0.89 after remediation |
+| **3** Architecture & Ethics | Layer separation, HITL triggers, vendor obligations | AIEC Chair + CRO | Worked scenario: approved; no-agentic-surface recorded as a design decision |
+| **4** Security, Safety & Fairness | Both layers evaluated? Adversarially tested? | Head of Model Risk + CISO | Worked scenario: approved; GDR-06 recorded *Constrained*, not *Outstanding* |
+| **5** Bounded Release Authorisation | If implemented, may it carry traffic, at what scope, stoppable by whom? | AIGC + accountable business owner | Worked scenario: approved with a **500-application authorisation ceiling; not processed volume** |
 
 *Four-eyes rule at every gate: no decision approved by the person who produced its evidence. Enforced by automated check in A-28.*
 
@@ -142,25 +148,23 @@ flowchart LR
 
 ## 🚫 Signature Governance Decision — The Gate 2 Block
 
-Fairness testing used **counterfactual pair testing**: 120 matched pairs, 240 synthetic profiles, every financial variable held identical within each pair. Only the attribute under test varied. The threshold — **DIR ≥ 0.80** under the four-fifths rule — was written down before a single test ran.
+In the worked scenario, **counterfactual pair testing** uses 120 matched pairs / 240 synthetic profiles, with every financial variable held identical within each pair and only the investigated attribute varied. The design threshold — **DIR ≥ 0.80** using the four-fifths concept — is declared before the scenario test runs.
 
-**The result came back at 0.67.** Applicants with identical financial profiles were receiving different recommendations depending on residential postal district. No protected attribute had ever been supplied to either layer.
+**The worked result is 0.67.** The scenario therefore records a Gate 2 block rather than moving the threshold after seeing the result. The exercise deliberately includes a realistic delivery-pressure argument — no demographic field in the scoring feature set and a committed date approaching — to test whether governance authority survives schedule pressure.
 
-The delivery position was reasonable and is the argument made in every organisation: thirty percentage points across twelve planning areas, no demographic data in the feature set, committed date three weeks out. *This is small, it is not discrimination, and we do not have time.*
-
-**I blocked the gate** — precisely because the threshold was pre-declared. 0.80 was chosen so the decision would not turn on a post-hoc judgement about what counts as small.
+My contribution was to design the threshold, decision logic, evidence chain, diagnostic method and remediation path. The gate block, delivery pressure and release are worked-scenario behaviours, not meetings or production decisions I personally operated.
 
 | | |
 |---|---|
 | **Root cause** | Postal district in **retrieval corpus metadata**, carried from a predecessor schema with no recorded purpose. The scoring feature set was clean — the disparity entered through the retrieval layer, the surface conventional model review doesn't inspect |
-| **Diagnostic** | Retrieval-chunk differential: adverse-action guidance retrieved **2.3× more often** for the four lowest-income segments. The outcome metric proved a problem existed; this located it |
+| **Diagnostic (worked scenario)** | Retrieval-chunk differential is modelled at **2.3×** for the four lowest-income segments. The outcome metric signals a problem; this diagnostic is used to locate the retrieval-side effect |
 | **Remediation** | **Structural, not compensatory** — field deleted, address added to the redaction entity set so upstream reintroduction can't silently restore it, prompt constrained to exclude geography |
-| **Re-test** | **0.89.** Retrieval differential fell to 1.1. Released 11 days after the block |
+| **Re-test (worked scenario)** | **0.89.** Retrieval differential is modelled at 1.1; the scenario records release 11 days after the block |
 | **Framework change** | Q2.4 became a mandatory written inference assessment for every field before ingestion |
 
-**The block record is retained permanently, above the release record.** Deleting it once remediated would erase the only evidence the framework has ever stopped anything.
+**The design requires the blocked row to remain permanently above the later release row.** Removing it after remediation would erase the worked evidence that the gate can return “no”.
 
-> Recorded in the DPIA rather than smoothed over: data minimisation was **not** satisfied at first design. The framework worked — at the testing gate, one stage *after* the failure was introduced. The version where governance caught it at design review is a better story and a false one.
+> The worked DPIA records that data minimisation was **not** satisfied at first design. The scenario is intentionally not rewritten to pretend governance caught the issue earlier than it did.
 
 ---
 
@@ -171,8 +175,8 @@ The delivery position was reasonable and is the argument made in every organisat
 | | Scoring layer | Narration layer |
 |---|---|---|
 | **Technique** | SHAP (global + local) · LIME (individual adverse-action cases) | Passage-level citation · grounding verification · relevance scoring |
-| **Why it fits** | Fixed, enumerable feature vector — what Shapley values assume | No stable feature vector; inputs are tokens, output is prose |
-| **Deliberately not used** | — | **SHAP / LIME** — attribution over tokens tells a declined applicant nothing actionable |
+| **Why it fits** | Structured scoring features directly drive the decision, making SHAP/LIME customer-actionable at this layer | The narration layer does not make the credit decision; source citation, support and grounding are the relevant assurance methods |
+| **Deliberately not used as the credit-decision explanation** | — | **Token-level attribution of narration** — it does not explain the decision because the narration layer does not make it |
 
 **Grounding floor ≥ 0.75 with block-on-fail.** A below-threshold narration is not shown at all, rather than flagged and passed to a human who will sometimes accept it under volume pressure.
 
@@ -180,7 +184,22 @@ The delivery position was reasonable and is the argument made in every organisat
 - **Citation resolution** — does the cited passage exist and is it the one shown? Automated, absolute.
 - **Citation support** — does that passage actually *say* what the rationale claims? Sampled, qualitative.
 
-They fail independently. A citation can resolve correctly to an indexed passage that does not support the claim made from it. Treating resolution as sufficient is the commonest gap in RAG governance.
+They fail independently. A citation can resolve correctly to an indexed passage that does not support the claim made from it. Treating resolution as sufficient is a common RAG governance gap.
+
+---
+
+## AI-Specific Threat Controls
+
+Four domains that separate AI governance from conventional application security. Each maps to a named threat, a control, and the artefact that evidences it.
+
+| Domain | Threat | Control | Evidence | Framework |
+|---|---|---|---|---|
+| **Prompt injection** | Direct and indirect — including malicious instructions embedded in retrieved content (T-01, T-02) | User input evaluated before retrieval; retrieved content evaluated again before entering the narration prompt; output checked before display/persistence. Adversarial cases cover direct, indirect, obfuscated and retrieval-borne attacks. System-prompt versioning/hashing (DET-02) is an integrity control, not a substitute for injection testing | A-39 · A-10 FM-09 | OWASP LLM01 · MITRE ATLAS evasion |
+| **Retrieval-source governance** | Corpus poisoning; stale/unauthorised policy; proxy attributes entering through metadata (T-07) | Approved-source inventory with named owner, purpose, sensitivity, effective date, corpus/version ID, integrity hash, ingestion/change approval and lineage into the vector index; **mandatory Q2.4 inference assessment on every metadata field before ingestion**; corpus, metadata-schema, embedding/index, prompt-template and access-control changes trigger targeted re-evaluation | A-13 · A-14 · A-08 | OWASP LLM08 · EU AI Act Art.10 |
+| **PII leakage** | Exposure through input, retrieved context, generated output or persisted audit evidence (T-03) | Tokenisation/masking at ingestion with separate re-identification-key custody; synthetic-PII effectiveness tests across input, retrieved context, generated output and persisted logs; six-entity redaction including Singapore NRIC/FIN applied before return **and before any record is written** (LOG-02) | A-13 · A-24 · A-35 | OWASP LLM02 · GDPR Art.32 · PDPA |
+| **Human-in-the-loop** | Oversight decay under volume — the failure Art.14 exists to prevent (FM-13) | Four mandatory checks; routing on marginal score, adverse action, low confidence, thin file and policy gap; **two-sided override band 15–40%**; reviewer identity/timestamp/reason evidence; version-bound competency attestation; contested decisions routed to a **different underwriter who may disregard the AI narration entirely** | A-36 · A-38 · A-37 | EU AI Act Art.14 · GDPR Art.22(3) |
+
+**The design point running through all four:** controls sit at the relevant trust boundary rather than relying on optional application behaviour. Redaction runs before persistence. Direct-injection checks run before retrieval, retrieved-content checks run before the narration prompt, and output checks run before display or logging. Oversight is measured two-sided because an unusually low override rate can indicate ceremonial review rather than high model quality. The Q2.4 proxy-inference question is asked before metadata enters the retrieval surface.
 
 ---
 
@@ -189,8 +208,8 @@ They fail independently. A citation can resolve correctly to an indexed passage 
 | Decision | Risk controlled | Evidence / artefact |
 |---|---|---|
 | Deterministic scoring decides; generative layer only explains | Unattributable decisions; GDPR Art.22 indefensibility | A-04 System Profile · A-19 Model Card |
-| Enforcement at the IAM permission layer, not application code | Ungoverned invocation — a guardrail an app can skip is a convention | A-39 ENF-01 with demonstrated denial |
-| Retrieval over fine-tuning | Uncitable knowledge locked in weights | A-16 Build vs Buy |
+| Enforcement at the IAM permission layer, not optional application logic | Ungoverned invocation — a control an application can silently omit is a convention | A-39 ENF-01; design requires demonstrated denial as pre-release evidence plus governed exception handling |
+| Retrieval over fine-tuning | Fine-tuning alone does not provide the passage-level source traceability required for changing lending policy | A-16 Build vs Buy |
 | Test partition held by Model Risk, not the build team | Validation-as-test contamination under deadline pressure | A-18 Model Registry |
 | Two-sided override band (15–40%) | Oversight decay — a low override rate looks like quality, signals formality | A-30 Monitoring Policy · A-36 |
 | Circuit breaker to deterministic fallback | Degraded-but-plausible narration reaching an underwriter | A-33 Rollback Log · A-44 BCP |
@@ -202,19 +221,19 @@ They fail independently. A citation can resolve correctly to an indexed passage 
 ## Interview Discussion Guide
 
 **1. Why separate the scoring and narration layers?**
-Because it determines which explainability techniques are legitimate. SHAP needs a fixed feature vector, which the generative layer doesn't have — so the deterministic model decides and SHAP explains it, while the LLM narrates that attribution with passage-level citations.
+Because the structured scoring features directly drive the credit recommendation, so SHAP can explain the decision at the layer that actually makes it. The generative layer does not make the credit decision; it translates those validated drivers into policy-cited language and is assured through retrieval relevance, citation support and grounding.
 
 **2. Why declare the fairness threshold before testing?**
-Because a threshold set afterwards isn't a threshold, it's a rationalisation. 0.80 was written down first specifically so the 0.67 result couldn't be argued down as "small" when the deadline pressure arrived — and that's exactly what was attempted.
+Because a threshold set afterwards is a rationalisation. In the worked scenario, 0.80 exists before the simulated 0.67 result, so the governance response can be tested without moving the bar after seeing the outcome or introducing schedule pressure into the decision.
 
 **3. How do you justify accepting residual risk?**
-Twelve risks remain open because they only materialise in production and are managed by measurement with named thresholds and escalation. The one *accepted* residual risk names an individual accepting role, not the committee — a risk accepted collectively is a risk nobody owns.
+Twelve of twenty risks remain open by design: nine monitored, two active and one accepted. Many only become measurable during operation, so the governance design gives them named thresholds, owners and escalation rather than pretending they are closed. The one *accepted* residual risk names an individual accepting role, not the committee — collective acceptance can otherwise blur accountability.
 
 **4. Your maturity score is 2.6/5. Why publish that?**
-It's the correct number for a framework proven on one system over eight months, and independent assurance scores 1/5 because Internal Audit hasn't passed. A framework claiming 4s across the board is telling you the assessor had no incentive to find anything.
+It is a deliberately conservative self-assessment of a framework exercised against one worked use case across an eight-month scenario timeline. Independent assurance scores 1/5 because no independent audit evidence exists. Publishing that limitation prevents design-time evidence from being misrepresented as operational maturity.
 
 **5. Why keep the block record after remediation?**
-Because it's the only evidence the framework has ever stopped anything. A gate log showing only approvals cannot demonstrate the gate is real — the blocked row sits permanently above its release row for exactly that reason.
+Because a gate log containing only approvals cannot demonstrate effective challenge. In the worked scenario, the blocked row remains above the later release row so the evidence chain shows that the governance design can return “no”.
 
 ---
 
@@ -225,56 +244,58 @@ Twenty years of enterprise security governance transfers to AI more directly tha
 ---
 
 <details>
-<summary><strong>📁 Full 44-Artefact Ledger</strong>
+<summary><strong>📁 Full 44-Artefact Ledger</strong> — 3 Valid · 13 Needs Extension · 28 Recreated</summary>
 
 Three `Valid` out of forty-four means a mature enterprise control estate transferred almost nothing directly to a high-risk AI deployment. That's not a criticism of the estate — it's the measurable cost of the obligation set.
 
-| ID | Artefact | Phase |
+| ID | Artefact | Lifecycle use |
 |---|---|---|
-| A-01 | AI Use Case Inventory | 1 | 
-| A-02 | AI System Inventory Record | 1, 6 | 
-| A-03 | AI Risk Classification | 1 |
-| A-04 | AI System Profile | 3 | 
-| A-05 | Stakeholder Impact Matrix | 1 | 
-| A-06 | Data & AI Governance Maturity Self-Assessment | 1, 6 |
-| A-07 | Algorithmic Impact Assessment | 4 |
-| A-08 | Risk Identification Checklist | 1–3 | 
-| A-09 | Enterprise AI Risk Register | 1–6 | 
-| A-10 | AI FMEA | 3, 4 | 
-| A-11 | Risk Treatment Plan | 2–6 | 
-| A-12 | AI Risk Management Policy incl. Appetite Statement | 1 |
-| A-13 | Data Governance & Privacy Policy for AI | 2 | 
-| A-14 | Data Lineage & Provenance Record | 2 | 
-| A-15 | Algorithmic Explainability & Bias Testing Report | 2, 4, 6 | 
-| A-16 | AI Vendor Assessment Plan (incl. Build vs Buy) | 1, 3 | 
-| A-17 | Foundation Model Vendor Due-Diligence Checklist | 3 | 
-| A-18 | AI Model Registry | 3, 6 | 
-| A-19 | System Model Card | 4 | 
-| A-20 | Responsible AI Policy & Verification Guidelines | 1–6 | 
-| A-21 | Internal GenAI Acceptable Use Policy (governed systems) | 3, 5 | 
-| A-22 | GenAI Acceptable Usage Policy (workforce) | 5 | 
-| A-23 | AI Governance Policy (apex) | 1 | 
-| A-24 | GenAI Policy Compliance Tracker | 3, 4 | 
-| A-25 | AI Governance Strategy Document | 1 |
-| A-26 | AI Governance Committee Charter | 1 |
-| A-27 | Implementation Roadmap | 1–6 |
-| A-28 | Lifecycle Gate Approval Log | 1–6 |
-| A-29 | Executive Briefing | 1–6 |
-| A-30 | Post-Deployment Monitoring & Review Policy | 6 |
-| A-31 | Audit Charter | 1, 6 |
-| A-32 | AI Incident Response Playbook | 5, 6 |
-| A-33 | Model Monitoring Dashboard & Rollback Log | 6 |
-| A-34 | AI Kill Switch & Emergency Suspension Provision | 5 |
-| A-35 | PANOPTIC Privacy Assessment & DPIA | 2 |
-| A-36 | Human Oversight & Escalation Procedure | 3, 5 |
-| A-37 | Adverse Action & Customer Recourse Procedure | 5 |
-| A-38 | AI Literacy & Competency Record | 5 |
-| A-39 | AI Red Teaming & Threat Matrix / Control Testing Index | 4 |
-| A-40 | Model Change & Deprecation Log | 6 |
-| A-41 | Decommissioning & Records Retention Plan | 6 |
-| A-42 | AI Ethics Committee Charter | 1 |
-| A-43 | Governance Maturity Tracker | 6 |
-| A-44 | Business Continuity & Operational Resilience Playbook | 5 |
+| A-01 | AI Use Case Inventory | Create at intake; update on material scope change |
+| A-02 | AI System Inventory Record | Create at intake; maintain through operation/retirement |
+| A-03 | AI Risk Classification | Create at intake; revalidate on material change |
+| A-04 | AI System Profile | Draft during architecture; baseline before release; update on change |
+| A-05 | Stakeholder Impact Matrix | Create at intake; refine before approval and on material change |
+| A-06 | Data & AI Governance Maturity Self-Assessment | Baseline early; reassess periodically |
+| A-07 | Algorithmic Impact Assessment | Initiate early; complete before release; revisit on material change |
+| A-08 | Risk Identification Checklist | Start at intake; refine through data and architecture design |
+| A-09 | Enterprise AI Risk Register | Open at intake; update continuously through retirement |
+| A-10 | AI FMEA | Start once data/architecture failure modes are visible; mature through control design |
+| A-11 | Risk Treatment Plan | Create with first material risks; update through remediation/operation |
+| A-12 | AI Risk Management Policy incl. Appetite Statement | Establish before threshold-based testing; maintain as policy |
+| A-13 | Data Governance & Privacy Policy for AI | Create/refine before data ingestion; maintain through operation |
+| A-14 | Data Lineage & Provenance Record | Create during data design; update with every material data/corpus change |
+| A-15 | Algorithmic Explainability & Bias Testing Report | Define methods before testing; update after worked-scenario re-tests and, in future implementation, after material changes |
+| A-16 | AI Vendor Assessment Plan (incl. Build vs Buy) | Initiate early; finalise during vendor/architecture selection; revisit on major change |
+| A-17 | Foundation Model Vendor Due-Diligence Checklist | Complete before vendor approval; refresh periodically/on change |
+| A-18 | AI Model Registry | Create when candidate/approved models exist; maintain by version |
+| A-19 | System Model Card | Build during validation; baseline before release; update on retrain/material change |
+| A-20 | Responsible AI Policy & Verification Guidelines | Establish early; apply throughout lifecycle |
+| A-21 | Internal GenAI Acceptable Use Policy (governed systems) | Define during architecture/control design; enforce before release |
+| A-22 | GenAI Acceptable Usage Policy (workforce) | Establish before workforce access; maintain thereafter |
+| A-23 | AI Governance Policy (apex) | Establish governance baseline early; maintain as apex policy |
+| A-24 | GenAI Policy Compliance Tracker | Start with control design; update through assurance/change |
+| A-25 | AI Governance Strategy Document | Establish at programme initiation; revisit strategically |
+| A-26 | AI Governance Committee Charter | Establish before gate decisions begin |
+| A-27 | Implementation Roadmap | Baseline early; track variance through lifecycle |
+| A-28 | Lifecycle Gate Approval Log | Initiate at Gate 1; append every gate decision/block/release |
+| A-29 | Executive Briefing | Create after preliminary intake/classification; update for material decisions and release readiness |
+| A-30 | Post-Deployment Monitoring & Review Policy | Design before release; operate and refine post-release |
+| A-31 | Audit Charter | Define assurance independence/scope early; execute audit activity later |
+| A-32 | AI Incident Response Playbook | Design/test before release; operate post-release |
+| A-33 | Model Monitoring Dashboard & Rollback Log | Define signals/rollback before release; populate/operate after release |
+| A-34 | AI Kill Switch & Emergency Suspension Provision | Design and evidence before release; invoke only if needed |
+| A-35 | PANOPTIC Privacy Assessment & DPIA | Start before sensitive-data processing; update on material privacy change |
+| A-36 | Human Oversight & Escalation Procedure | Define during architecture; validate before release; monitor thereafter |
+| A-37 | Adverse Action & Customer Recourse Procedure | Design before release; operate for contested decisions |
+| A-38 | AI Literacy & Competency Record | Establish before users/reviewers perform governed roles; maintain by version/role |
+| A-39 | AI Red Teaming & Threat Matrix / Control Testing Index | Start threat modelling with architecture; mature testing before release; re-test on change |
+| A-40 | Model Change & Deprecation Log | Start when governed model/prompt/corpus versions exist; maintain through retirement |
+| A-41 | Decommissioning & Records Retention Plan | Define retention/retirement requirements before release; execute at retirement |
+| A-42 | AI Ethics Committee Charter | Establish before ethics review begins; revisit if mandate changes |
+| A-43 | Governance Maturity Tracker | Baseline and update periodically; not proof of independent assurance |
+| A-44 | Business Continuity & Operational Resilience Playbook | Design/test before release; operate and exercise thereafter |
+
+`Valid` — applied without structural modification · `Needs Extension` — pre-existing artefact augmented for GenAI/high-risk obligations · `Recreated` — newly constructed or fully rebuilt.
 
 </details>
 
@@ -292,7 +313,7 @@ Three `Valid` out of forty-four means a mature enterprise control estate transfe
 | **Model AI Governance Framework** | Internal governance · human involvement · operations mgmt · stakeholder interaction | 1, 4 | A-25 · A-36 · A-37 |
 | **GDPR** | **Art.22** · Art.5 · Art.13–15 · Art.32 · Art.35 · Recital 71 | 2, 4 | A-35 · A-36 · A-37 · A-13 |
 | **NIST AI RMF 1.0** | GOVERN · MAP · MEASURE 2.5/2.11 · MANAGE 4.1 | All | A-25 · A-08 · A-15 · A-30 |
-| **ISO/IEC 42001:2023** & **ISO/IEC 38507:2022** | Cl.5 · Cl.6 · Cl.8 · Cl.9 · Cl.10 | 1, 4, 5 | A-23 · A-26 · A-31 · A-43 |
+| **ISO/IEC 42001:2023** | Cl.5 · Cl.6 · Cl.8 · Cl.9 · Cl.10 | 1, 4, 5 | A-23 · A-26 · A-31 · A-43 |
 | **ISO/IEC 23053:2022** | ML lifecycle stages, components, stakeholder roles | 2, 3 | A-04 · A-19 · A-25 |
 | **OWASP LLM Top 10 (2025)** | LLM01 · LLM02 · LLM05 · LLM06 · LLM07 · LLM08 | 4 | A-39 · A-10 |
 | **MITRE ATLAS** | Evasion · exfiltration · supply chain | 4 | A-39 · A-10 |
@@ -306,18 +327,18 @@ Three `Valid` out of forty-four means a mature enterprise control estate transfe
 
 | Threat | Framework | Layer | Control | Residual |
 |---|---|---|---|---|
-| Prompt injection — direct | OWASP LLM01 · ATLAS evasion | Narration | Prompt-attack filtering; deterministic system prompt | Novel patterns — quarterly refresh |
-| Prompt injection — indirect | OWASP LLM01 | Narration | Input evaluated before retrieval; guardrail ordering | As above |
-| Sensitive information disclosure | OWASP LLM02 | Narration | Six-entity PII redaction pre-output **and** pre-log | Low |
+| Prompt injection — direct | OWASP LLM01 · ATLAS evasion | Narration | User input evaluated before retrieval; direct/obfuscated attack suite; system-prompt integrity controlled separately | Novel patterns — quarterly refresh |
+| Prompt injection — indirect | OWASP LLM01 | Narration | Retrieved content evaluated before entering the narration prompt; adversarial retrieval-borne test cases | As above |
+| Sensitive information disclosure | OWASP LLM02 | Narration | Tokenisation/masking at ingestion; synthetic-PII tests across input/retrieval/output/log; six-entity redaction pre-output **and** pre-log | Low |
 | Improper output handling | OWASP LLM05 | Orchestration | Output encoding at application boundary | Low |
 | Excessive agency | OWASP LLM06 | Orchestration | No agentic tool surface | **Eliminated by design** |
-| System prompt leakage | OWASP LLM07 | Narration | Prompt versioned and hashed | Low |
-| Vector store poisoning | OWASP LLM08 · ATLAS | Retrieval | Corpus change as controlled event; monthly hash check | Low |
+| System prompt leakage | OWASP LLM07 | Narration | Prompt versioning/hashing for integrity plus leakage-oriented adversarial testing | Low |
+| Vector store poisoning | OWASP LLM08 · ATLAS | Retrieval | Approved-source inventory, controlled corpus/index changes, integrity hashes and targeted re-evaluation | Low |
 | **Model extraction** | ATLAS exfiltration | **Scoring** | Per-identity rate limiting; query-pattern alarm | Medium — monitored |
 | **Membership inference** | ATLAS exfiltration | **Scoring** | Rate limiting; no per-record confidence exposure | Medium — monitored |
 | Adversarial perturbation | ATLAS evasion | **Scoring** | Confidence thresholds; HITL routes marginal scores | Low — routed to human by design |
 | Proxy discrimination | EU AI Act Art.10 · MAS FEAT | Retrieval | Q2.4 inference assessment; counterfactual testing | Bounded by test design |
-| Ungoverned invocation | CSA AICM | Orchestration | Permission-layer enforcement; demonstrated denial | **Zero appetite** — any occurrence is P1 |
+| Ungoverned invocation | CSA AICM | Orchestration | Permission-layer enforcement; demonstrated denial required as pre-release evidence; governed exception path | **Zero appetite** — any occurrence is P1 |
 
 </details>
 
