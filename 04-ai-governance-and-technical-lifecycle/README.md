@@ -1,4 +1,4 @@
-# 🧭 AI Governance for Credit Decisioning - Governing a High-Risk AI System End to End
+# 🧭 AI Governance for Credit Decisioning — Governing a High-Risk AI System End to End
 
 > **Portfolio role:** AI Governance Lead / Governance Design Authority
 > **System:** Credit Decisioning Assistant — hybrid deterministic scoring layer + RAG narration layer on Amazon Bedrock
@@ -244,58 +244,60 @@ Twenty years of enterprise security governance transfers to AI more directly tha
 ---
 
 <details>
-<summary><strong>📁 Full 44-Artefact Ledger</strong> — 3 Valid · 13 Needs Extension · 28 Recreated</summary>
+<summary><strong>📁 Full 44-Artefact Ledger</strong> — 3 Carried over · 13 Extended · 28 Purpose-built</summary>
 
-Three `Valid` out of forty-four means a mature enterprise control estate transferred almost nothing directly to a high-risk AI deployment. That's not a criticism of the estate — it's the measurable cost of the obligation set.
+Three `Carried over` out of forty-four means a mature enterprise control estate transferred almost nothing directly to a high-risk AI deployment. That's not a criticism of the estate — it's the measurable cost of the obligation set.
 
-| ID | Artefact | Lifecycle use |
-|---|---|---|
-| A-01 | AI Use Case Inventory | Create at intake; update on material scope change |
-| A-02 | AI System Inventory Record | Create at intake; maintain through operation/retirement |
-| A-03 | AI Risk Classification | Create at intake; revalidate on material change |
-| A-04 | AI System Profile | Draft during architecture; baseline before release; update on change |
-| A-05 | Stakeholder Impact Matrix | Create at intake; refine before approval and on material change |
-| A-06 | Data & AI Governance Maturity Self-Assessment | Baseline early; reassess periodically |
-| A-07 | Algorithmic Impact Assessment | Initiate early; complete before release; revisit on material change |
-| A-08 | Risk Identification Checklist | Start at intake; refine through data and architecture design |
-| A-09 | Enterprise AI Risk Register | Open at intake; update continuously through retirement |
-| A-10 | AI FMEA | Start once data/architecture failure modes are visible; mature through control design |
-| A-11 | Risk Treatment Plan | Create with first material risks; update through remediation/operation |
-| A-12 | AI Risk Management Policy incl. Appetite Statement | Establish before threshold-based testing; maintain as policy |
-| A-13 | Data Governance & Privacy Policy for AI | Create/refine before data ingestion; maintain through operation |
-| A-14 | Data Lineage & Provenance Record | Create during data design; update with every material data/corpus change |
-| A-15 | Algorithmic Explainability & Bias Testing Report | Define methods before testing; update after worked-scenario re-tests and, in future implementation, after material changes |
-| A-16 | AI Vendor Assessment Plan (incl. Build vs Buy) | Initiate early; finalise during vendor/architecture selection; revisit on major change |
-| A-17 | Foundation Model Vendor Due-Diligence Checklist | Complete before vendor approval; refresh periodically/on change |
-| A-18 | AI Model Registry | Create when candidate/approved models exist; maintain by version |
-| A-19 | System Model Card | Build during validation; baseline before release; update on retrain/material change |
-| A-20 | Responsible AI Policy & Verification Guidelines | Establish early; apply throughout lifecycle |
-| A-21 | Internal GenAI Acceptable Use Policy (governed systems) | Define during architecture/control design; enforce before release |
-| A-22 | GenAI Acceptable Usage Policy (workforce) | Establish before workforce access; maintain thereafter |
-| A-23 | AI Governance Policy (apex) | Establish governance baseline early; maintain as apex policy |
-| A-24 | GenAI Policy Compliance Tracker | Start with control design; update through assurance/change |
-| A-25 | AI Governance Strategy Document | Establish at programme initiation; revisit strategically |
-| A-26 | AI Governance Committee Charter | Establish before gate decisions begin |
-| A-27 | Implementation Roadmap | Baseline early; track variance through lifecycle |
-| A-28 | Lifecycle Gate Approval Log | Initiate at Gate 1; append every gate decision/block/release |
-| A-29 | Executive Briefing | Create after preliminary intake/classification; update for material decisions and release readiness |
-| A-30 | Post-Deployment Monitoring & Review Policy | Design before release; operate and refine post-release |
-| A-31 | Audit Charter | Define assurance independence/scope early; execute audit activity later |
-| A-32 | AI Incident Response Playbook | Design/test before release; operate post-release |
-| A-33 | Model Monitoring Dashboard & Rollback Log | Define signals/rollback before release; populate/operate after release |
-| A-34 | AI Kill Switch & Emergency Suspension Provision | Design and evidence before release; invoke only if needed |
-| A-35 | PANOPTIC Privacy Assessment & DPIA | Start before sensitive-data processing; update on material privacy change |
-| A-36 | Human Oversight & Escalation Procedure | Define during architecture; validate before release; monitor thereafter |
-| A-37 | Adverse Action & Customer Recourse Procedure | Design before release; operate for contested decisions |
-| A-38 | AI Literacy & Competency Record | Establish before users/reviewers perform governed roles; maintain by version/role |
-| A-39 | AI Red Teaming & Threat Matrix / Control Testing Index | Start threat modelling with architecture; mature testing before release; re-test on change |
-| A-40 | Model Change & Deprecation Log | Start when governed model/prompt/corpus versions exist; maintain through retirement |
-| A-41 | Decommissioning & Records Retention Plan | Define retention/retirement requirements before release; execute at retirement |
-| A-42 | AI Ethics Committee Charter | Establish before ethics review begins; revisit if mandate changes |
-| A-43 | Governance Maturity Tracker | Baseline and update periodically; not proof of independent assurance |
-| A-44 | Business Continuity & Operational Resilience Playbook | Design/test before release; operate and exercise thereafter |
+| ID | Artefact | Lifecycle use | Status |
+|---|---|---|---|
+| A-01 | AI Use Case Inventory | Create at intake; update on material scope change | Extended |
+| A-02 | AI System Inventory Record | Create at intake; maintain through operation/retirement | Extended |
+| A-03 | AI Risk Classification | Create at intake; revalidate on material change | Purpose-built |
+| A-04 | AI System Profile | Draft during architecture; baseline before release; update on change | Purpose-built |
+| A-05 | Stakeholder Impact Matrix | Create at intake; refine before approval and on material change | Extended |
+| A-06 | Data & AI Governance Maturity Self-Assessment | Baseline early; reassess periodically | Purpose-built |
+| A-07 | Algorithmic Impact Assessment | Initiate early; complete before release; revisit on material change | Purpose-built |
+| A-08 | Risk Identification Checklist | Start at intake; refine through data and architecture design | Extended |
+| A-09 | Enterprise AI Risk Register | Open at intake; update continuously through retirement | Extended |
+| A-10 | AI FMEA | Start once data/architecture failure modes are visible; mature through control design | Purpose-built |
+| A-11 | Risk Treatment Plan | Create with first material risks; update through remediation/operation | Extended |
+| A-12 | AI Risk Management Policy incl. Appetite Statement | Establish before threshold-based testing; maintain as policy | Extended |
+| A-13 | Data Governance & Privacy Policy for AI | Create/refine before data ingestion; maintain through operation | Purpose-built |
+| A-14 | Data Lineage & Provenance Record | Create during data design; update with every material data/corpus change | Extended |
+| A-15 | Algorithmic Explainability & Bias Testing Report | Define methods before testing; update after worked-scenario re-tests and, in future implementation, after material changes | Purpose-built |
+| A-16 | AI Vendor Assessment Plan (incl. Build vs Buy) | Initiate early; finalise during vendor/architecture selection; revisit on major change | Extended |
+| A-17 | Foundation Model Vendor Due-Diligence Checklist | Complete before vendor approval; refresh periodically/on change | Purpose-built |
+| A-18 | AI Model Registry | Create when candidate/approved models exist; maintain by version | Extended |
+| A-19 | System Model Card | Build during validation; baseline before release; update on retrain/material change | Purpose-built |
+| A-20 | Responsible AI Policy & Verification Guidelines | Establish early; apply throughout lifecycle | Purpose-built |
+| A-21 | Internal GenAI Acceptable Use Policy (governed systems) | Define during architecture/control design; enforce before release | Extended |
+| A-22 | GenAI Acceptable Usage Policy (workforce) | Establish before workforce access; maintain thereafter | Purpose-built |
+| A-23 | AI Governance Policy (apex) | Establish governance baseline early; maintain as apex policy | Extended |
+| A-24 | GenAI Policy Compliance Tracker | Start with control design; update through assurance/change | Extended |
+| A-25 | AI Governance Strategy Document | Establish at programme initiation; revisit strategically | Purpose-built |
+| A-26 | AI Governance Committee Charter | Establish before gate decisions begin | Purpose-built |
+| A-27 | Implementation Roadmap | Baseline early; track variance through lifecycle | Carried over |
+| A-28 | Lifecycle Gate Approval Log | Initiate at Gate 1; append every gate decision/block/release | Purpose-built |
+| A-29 | Executive Briefing | Create after preliminary intake/classification; update for material decisions and release readiness | Carried over |
+| A-30 | Post-Deployment Monitoring & Review Policy | Design before release; operate and refine post-release | Purpose-built |
+| A-31 | Audit Charter | Define assurance independence/scope early; execute audit activity later | Purpose-built |
+| A-32 | AI Incident Response Playbook | Design/test before release; operate post-release | Extended |
+| A-33 | Model Monitoring Dashboard & Rollback Log | Define signals/rollback before release; populate/operate after release | Extended |
+| A-34 | AI Kill Switch & Emergency Suspension Provision | Design and evidence before release; invoke only if needed | Purpose-built |
+| A-35 | PANOPTIC Privacy Assessment & DPIA | Start before sensitive-data processing; update on material privacy change | Purpose-built |
+| A-36 | Human Oversight & Escalation Procedure | Define during architecture; validate before release; monitor thereafter | Purpose-built |
+| A-37 | Adverse Action & Customer Recourse Procedure | Design before release; operate for contested decisions | Purpose-built |
+| A-38 | AI Literacy & Competency Record | Establish before users/reviewers perform governed roles; maintain by version/role | Purpose-built |
+| A-39 | AI Red Teaming & Threat Matrix / Control Testing Index | Start threat modelling with architecture; mature testing before release; re-test on change | Purpose-built |
+| A-40 | Model Change & Deprecation Log | Start when governed model/prompt/corpus versions exist; maintain through retirement | Purpose-built |
+| A-41 | Decommissioning & Records Retention Plan | Define retention/retirement requirements before release; execute at retirement | Purpose-built |
+| A-42 | AI Ethics Committee Charter | Establish before ethics review begins; revisit if mandate changes | Purpose-built |
+| A-43 | Governance Maturity Tracker | Baseline and update periodically; not proof of independent assurance | Purpose-built |
+| A-44 | Business Continuity & Operational Resilience Playbook | Design/test before release; operate and exercise thereafter | Carried over |
 
-`Valid` — applied without structural modification · `Needs Extension` — pre-existing artefact augmented for GenAI/high-risk obligations · `Recreated` — newly constructed or fully rebuilt.
+`Carried over` — existing enterprise artefact applied without structural modification · `Extended` — pre-existing artefact augmented to carry GenAI and high-risk obligations · `Purpose-built` — newly constructed for this lifecycle.
+
+Forty-one of forty-four were extended or purpose-built.
 
 </details>
 
