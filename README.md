@@ -22,14 +22,16 @@ That distinction is stated in each project's own README and maintained throughou
 
 | # | Project | What it demonstrates | Evidence type |
 |---|---|---|---|
-| **P1** | **Security Governance Baseline** | Policy-as-code control baseline with traceability across 13 frameworks | ✅ Deployed |
-| **P2** | **Threat Detection & Alerting Pipeline** | Event-driven detection, alerting and documented incident response | ✅ Deployed |
-| **P3** | **IAM Governance & Access Analysis** | Least-privilege identity governance and access certification discipline | ✅ Deployed |
-| **P4** | **AI Governance Framework** | Full AI governance lifecycle for a high-risk credit decisioning system | 📐 Designed |
+| **P1** | **[Security Governance Baseline](./01-governance-baseline)** | Policy-as-code control baseline with traceability across 13 frameworks | ✅ Deployed |
+| **P2** | **[Threat Detection & Alerting Pipeline](./02-threat-detection-pipeline)** | Event-driven detection, alerting and documented incident response | ✅ Deployed |
+| **P3** | **[IAM Governance & Access Analysis](./03-iam-governance)** | Least-privilege identity governance and access certification discipline | ✅ Deployed |
+| **P4** | **[AI Governance Framework](./04-ai-governance-and-technical-lifecycle)** | Full AI governance lifecycle for a high-risk credit decisioning system | 📐 Designed |
 
 ---
 
 ## P1 · Security Governance Baseline
+
+**📂 [Open project →](./01-governance-baseline)**
 
 Infrastructure-as-code governance baseline establishing regulatory-requirement-to-evidence traceability.
 
@@ -47,6 +49,8 @@ Infrastructure-as-code governance baseline establishing regulatory-requirement-t
 
 ## P2 · Threat Detection & Alerting Pipeline
 
+**📂 [Open project →](./02-threat-detection-pipeline)**
+
 Event-driven detection layer over the P1 baseline, with the response process written rather than assumed.
 
 - **EventBridge rules** — root login, IAM access key creation, S3 public-access change, high-severity GuardDuty findings
@@ -61,6 +65,8 @@ Event-driven detection layer over the P1 baseline, with the response process wri
 
 ## P3 · IAM Governance & Access Analysis
 
+**📂 [Open project →](./03-iam-governance)**
+
 Least-privilege identity architecture with the access-certification discipline applied to a cloud control plane.
 
 - **Four-role least-privilege hierarchy** with permission boundaries — Security Auditor, Developer, Incident Responder, Compliance Viewer
@@ -74,6 +80,8 @@ Least-privilege identity architecture with the access-certification discipline a
 ---
 
 ## P4 · AI Governance Framework — Credit Decisioning Assistant
+
+**📂 [Open project →](./04-ai-governance-and-technical-lifecycle)**  ·  **[Browse the 44-artifact register →](./04-ai-governance-and-technical-lifecycle/artifacts)**
 
 📐 **Governance design, not a production deployment.**
 
@@ -104,7 +112,7 @@ In the worked scenario, counterfactual fairness testing returns a **disparate im
 
 **Frameworks mapped:** EU AI Act · MAS TRM 2021 · MAS FEAT · Singapore PDPA · IMDA Model AI Governance Framework · GDPR (incl. Art.22) · NIST AI RMF 1.0 · ISO/IEC 42001 · ISO/IEC 23053 · OWASP LLM Top 10 (**A-39 mapping baseline: 2025; current 2026 edition reviewed separately**) · MITRE ATLAS · MITRE PANOPTIC · CSA AI Controls Matrix
 
-**Deliverables:** 44-artefact register · dual-track lifecycle case study · AI Governance Lifecycle Playbook
+**Deliverables:** [44-artefact register](./04-ai-governance-and-technical-lifecycle/artifacts) · dual-track lifecycle case study · AI Governance Lifecycle Playbook
 
 > The two figures worth leading with are the uncomfortable ones. **Until a third line has tested this, the framework is a statement of what it intends, verified by its author** — and that qualifies every other score in the assessment.
 
@@ -137,4 +145,4 @@ In the worked scenario, counterfactual fairness testing returns a **disparate im
 
 Projects 1–3 built entirely on **AWS Free Tier — target $0.00**, with a zero-spend budget alarm and documented teardown for every billable component. Project 4 required no AWS spend.
 
-> Cost discipline is itself a governance control: eliminating unnecessary resources reduces orphaned-resource, security and unexpected-spend risk.
+> Cost discipline is itself a governance control. P4's vector store was selected on the basis that it carries no standing capacity charge — an architecture with no idle resource has nothing to forget about, so it fails safe. The saving is a consequence of that property, not the reason for it.
