@@ -1,4 +1,4 @@
-# 🧭 AI Governance for Credit Decisioning — Governing a High-Risk AI System End to End
+# 🧭 AI Governance for Credit Decisioning - Governing a High-Risk AI System End to End
 
 > **Portfolio role:** AI Governance Lead / Governance Design Authority
 > **System:** Credit Decisioning Assistant — hybrid deterministic scoring layer + RAG narration layer on Amazon Bedrock
