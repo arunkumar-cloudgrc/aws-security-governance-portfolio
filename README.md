@@ -12,7 +12,7 @@
 
 **Projects 1–3 are deployed AWS builds.** Infrastructure-as-code, real resources, real console evidence, built on AWS Free Tier.
 
-**Project 4 is a governance design.** A worked enterprise example with 44 versioned artefacts — *designed and documented, not operated in production.* No production deployment, no operational telemetry, no measured business outcome.
+**Project 4 is a governance design.** A worked enterprise example with 44 versioned artifacts — *designed and documented, not operated in production.* No production deployment, no operational telemetry, no measured business outcome.
 
 That distinction is stated in each project's own README and maintained throughout. AI Governance defines what must be true before release and ensures those conditions remain governed throughout the lifecycle — drawing that line deliberately is the competence, not a concession.
 
@@ -43,7 +43,7 @@ Infrastructure-as-code governance baseline establishing regulatory-requirement-t
 - **GuardDuty** behavioural threat detection
 
 **Frameworks mapped:** MAS TRM 2021 · ISO 27001 · ISO 27002/27017/27018 · NIST SP 800-53 Rev.5 · NIST CSF 2.0 · GDPR · PDPA
-**Key artefact:** CloudFormation templates + 13-framework control mapping · CI validation via GitHub Actions (`cfn-lint`)
+**Key artifact:** CloudFormation templates + 13-framework control mapping · CI validation via GitHub Actions (`cfn-lint`)
 
 ---
 
@@ -101,7 +101,7 @@ In the worked scenario, counterfactual fairness testing returns a **disparate im
 
 | Metric | Value | Evidence level |
 |---|---|---|
-| Governance artefacts | **44** | Documented |
+| Governance artifacts | **44** | Documented |
 | Stage gates | **5** (D1–D7 mapping); worked scenario demonstrates one recorded block and no designed bypass | Documented design |
 | Risks tracked / open | **20 / 12** open by design | Documented design |
 | Failure modes analysed | **18** (FM-01 to FM-18) | Documented design |
@@ -112,7 +112,7 @@ In the worked scenario, counterfactual fairness testing returns a **disparate im
 
 **Frameworks mapped:** EU AI Act · MAS TRM 2021 · MAS FEAT · Singapore PDPA · IMDA Model AI Governance Framework · GDPR (incl. Art.22) · NIST AI RMF 1.0 · ISO/IEC 42001 · ISO/IEC 23053 · OWASP LLM Top 10 (**A-39 mapping baseline: 2025; current 2026 edition reviewed separately**) · MITRE ATLAS · MITRE PANOPTIC · CSA AI Controls Matrix
 
-**Deliverables:** [44-artefact register](./04-ai-governance-and-technical-lifecycle/artifacts) · dual-track lifecycle case study · AI Governance Lifecycle Playbook
+**Deliverables:** [44-artifact register](./04-ai-governance-and-technical-lifecycle/artifacts) · dual-track lifecycle case study · AI Governance Lifecycle Playbook
 
 > The two figures worth leading with are the uncomfortable ones. **Until a third line has tested this, the framework is a statement of what it intends, verified by its author** — and that qualifies every other score in the assessment.
 
@@ -126,7 +126,7 @@ In the worked scenario, counterfactual fairness testing returns a **disparate im
 | Monitor continuously | Guardium DAM | CloudTrail, GuardDuty, EventBridge | Drift, calibration, fairness, override band |
 | Flag deviation | FIM change alerts | Config non-compliance, Access Analyzer | Grounding block-on-fail, two-sided override band |
 | Remediate on cadence | Quarterly access review | Credential report cycle | Quarterly responsible model review |
-| Defend the evidence | Audit rule design | Immutable logging, 7-year retention | 44-artefact chain, gate approval log |
+| Defend the evidence | Audit rule design | Immutable logging, 7-year retention | 44-artifact chain, gate approval log |
 
 **The methodology is unchanged. Only the control plane moved** — first to cloud infrastructure, now to AI systems.
 
