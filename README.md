@@ -14,7 +14,7 @@
 
 **Project 4 is a governance design.** A worked enterprise example with 44 versioned artefacts — *designed and documented, not operated in production.* No production deployment, no operational telemetry, no measured business outcome.
 
-That distinction is stated in each project's own README and maintained throughout. An AI Governance Lead is accountable for what must be true *before* the engineering team builds — drawing that line deliberately is the competence, not a concession.
+That distinction is stated in each project's own README and maintained throughout. AI Governance defines what must be true before release and ensures those conditions remain governed throughout the lifecycle — drawing that line deliberately is the competence, not a concession.
 
 ---
 
@@ -52,10 +52,10 @@ Event-driven detection layer over the P1 baseline, with the response process wri
 - **EventBridge rules** — root login, IAM access key creation, S3 public-access change, high-severity GuardDuty findings
 - **CloudWatch alarms** with SNS notification
 - **Consolidated security dashboard** aggregating compliance and detection metrics
-- **Incident response runbooks** tracking MAS TRM's 1-hour notification clock alongside GDPR Article 33's 72-hour requirement
+- **Incident response runbooks** tracking the MAS Notice on Technology Risk Management 1-hour incident-notification requirement alongside GDPR Article 33's 72-hour personal-data-breach notification requirement
 
 **Frameworks mapped:** MAS TRM Ch.10 · NIST CSF 2.0 Detect/Respond · NIST SP 800-53 SI-4, IR-4, IR-6 · ISO 27001 A.5.24–5.28 · GDPR Art.33 · PDPA
-**Design point:** detection speed is a compliance control — the 72-hour clock starts when you become aware, so sub-minute detection starts it immediately rather than at a routine log review days later.
+**Design point:** detection speed supports regulatory incident response. Faster detection shortens the time needed to identify and assess potentially reportable incidents. The MAS Notice on Technology Risk Management includes a 1-hour notification requirement for relevant discovered system malfunctions; under GDPR Article 33, the 72-hour period applies once the controller is aware that a personal-data breach has occurred and notification is required.
 
 ---
 
@@ -81,28 +81,28 @@ A complete AI governance lifecycle for a system classified **high-risk under EU 
 
 ### The architecture decision everything depends on
 
-**Hybrid:** a deterministic gradient-boosted model produces the score and decision. A retrieval-grounded foundation model converts the SHAP drivers into a policy-cited rationale — and **never produces the score.** That separation is what keeps SHAP attribution valid, the GDPR Art.22 position defensible, and a deterministic fallback possible.
+**Hybrid:** a deterministic gradient-boosted model produces the score and decision. A retrieval-grounded foundation model converts the SHAP drivers into a policy-cited rationale — and **never produces the score.** That separation preserves customer-actionable attribution on the scoring layer, supports the designed GDPR Article 22 governance position, and enables deterministic fallback.
 
 ### The signature governance decision
 
-Fairness testing returned a **disparate impact ratio of 0.67** against a threshold of **0.80 declared before any test ran.** The gate was blocked three weeks from a committed date. Root cause was not the model — postal district sat in retrieval corpus metadata, carried from a predecessor schema with no recorded purpose. Structural remediation; **re-test cleared at 0.89**; released 11 days later.
+In the worked scenario, counterfactual fairness testing returns a **disparate impact ratio of 0.67** against a threshold of **0.80 declared before testing.** The governance design therefore records a Gate 2 block. The scenario traces the disparity to postal district in retrieval-corpus metadata rather than the scoring feature set, applies structural remediation and models a re-test at **0.89**, with release **11 scenario-days later**.
 
-**The block record is retained permanently, above its release record.** A gate log containing only approvals cannot demonstrate the gate has authority.
+**The block record remains above the later release record** so the evidence chain demonstrates that the governance gate is capable of returning "no." A gate log containing only approvals cannot demonstrate that authority.
 
 ### By the numbers
 
 | Metric | Value | Evidence level |
 |---|---|---|
 | Governance artefacts | **44** | Documented |
-| Stage gates | **5** (D1–D7 mapping) — 1 blocked, 0 bypassed | Documented design |
+| Stage gates | **5** (D1–D7 mapping); worked scenario demonstrates one recorded block and no designed bypass | Documented design |
 | Risks tracked / open | **20 / 12** open by design | Documented design |
 | Failure modes analysed | **18** (FM-01 to FM-18) | Documented design |
-| Threats modelled | **12** — OWASP LLM Top 10 · MITRE ATLAS | Documented design |
-| Control effectiveness-test coverage | **71%** (12 of 17) | Design-time definition |
+| Threats modelled | **12** — OWASP LLM Top 10 (2025 mapping baseline) · MITRE ATLAS | Documented design |
+| Controls with effectiveness-testing methods specified | **12 of 17 (71%)** | Design-time definition |
 | Governance maturity | **2.6 / 5** across 15 dimensions | Self-assessment |
-| Independent assurance | **1 / 5** — no audit pass completed | Self-assessment |
+| Independent assurance | **1 / 5** — no independent audit evidence exists | Self-assessment |
 
-**Frameworks mapped:** EU AI Act · MAS TRM 2021 · MAS FEAT · Singapore PDPA · IMDA Model AI Governance Framework · GDPR (incl. Art.22) · NIST AI RMF 1.0 · ISO/IEC 42001 · ISO/IEC 23053 · OWASP LLM Top 10 (2025) · MITRE ATLAS · MITRE PANOPTIC · CSA AI Controls Matrix
+**Frameworks mapped:** EU AI Act · MAS TRM 2021 · MAS FEAT · Singapore PDPA · IMDA Model AI Governance Framework · GDPR (incl. Art.22) · NIST AI RMF 1.0 · ISO/IEC 42001 · ISO/IEC 23053 · OWASP LLM Top 10 (**A-39 mapping baseline: 2025; current 2026 edition reviewed separately**) · MITRE ATLAS · MITRE PANOPTIC · CSA AI Controls Matrix
 
 **Deliverables:** 44-artefact register · dual-track lifecycle case study · AI Governance Lifecycle Playbook
 
@@ -137,4 +137,4 @@ Fairness testing returned a **disparate impact ratio of 0.67** against a thresho
 
 Projects 1–3 built entirely on **AWS Free Tier — target $0.00**, with a zero-spend budget alarm and documented teardown for every billable component. Project 4 required no AWS spend.
 
-> Cost discipline is itself a governance control: an architecture with no idle resource has nothing to forget about. It fails safe.
+> Cost discipline is itself a governance control: eliminating unnecessary resources reduces orphaned-resource, security and unexpected-spend risk.
