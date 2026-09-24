@@ -239,7 +239,7 @@ Because a gate log containing only approvals cannot demonstrate effective challe
 
 ## Security-to-AI Governance Transfer
 
-Twenty years of enterprise security governance transfers to AI more directly than the vocabulary suggests. IBM Guardium DAM and Tripwire FIM taught the same discipline this framework runs on: establish a baseline, monitor continuously, flag deviation, remediate on a cadence, and defend the evidence to an auditor. Enterprise IAM governance is where the permission-layer enforcement instinct comes from — a control that depends on an application choosing to apply it is a convention, and that lesson predates AI entirely. Change control, segregation of duties, four-eyes approval and evidence retention are unchanged; only the control plane moved, first to cloud infrastructure and now to AI systems. What is genuinely new is the inference surface — proxy attributes entering through retrieval metadata, oversight decaying under volume, a provider version change invalidating evidence you hold — and those are the gaps this framework was built to close.
+Twelve years of enterprise security governance — built on eight years of UNIX infrastructure engineering — transfers to AI more directly than the vocabulary suggests. IBM Guardium DAM and Tripwire FIM taught the same discipline this framework runs on: establish a baseline, monitor continuously, flag deviation, remediate on a cadence, and defend the evidence to an auditor. Enterprise IAM governance is where the permission-layer enforcement instinct comes from — a control that depends on an application choosing to apply it is a convention, and that lesson predates AI entirely. Change control, segregation of duties, four-eyes approval and evidence retention are unchanged; only the control plane moved, first to cloud infrastructure and now to AI systems. What is genuinely new is the inference surface — proxy attributes entering through retrieval metadata, oversight decaying under volume, a provider version change invalidating evidence you hold — and those are the gaps this framework was built to close.
 
 ---
 
@@ -346,4 +346,4 @@ Forty-one of forty-four were extended or purpose-built.
 
 ---
 
-**Author:** Arunkumar Devaraj — Cloud Security & AI Governance | CCSP | 20 years enterprise security (IBM Guardium DAM, Tripwire FIM, enterprise IAM governance), 12+ years multi-cloud | Transitioning into AI Governance Lead / Cloud Governance Lead roles.
+**Author:** Arunkumar Devaraj — Cloud Security & AI Governance | CCSP | 20+ years enterprise IT, including 12+ years in security (IBM Guardium DAM, Tripwire FIM) within a global regulated bank | Transitioning into AI Governance Lead / Cloud Governance Lead roles.
