@@ -3,7 +3,7 @@
 > **Four projects tracing one discipline across two control planes** — establish a baseline, monitor continuously, flag deviation, remediate on a cadence, and defend the evidence to an auditor. Projects 1–3 apply it to AWS infrastructure. Project 4 applies it to a high-risk AI system.
 
 **Arunkumar Devaraj** — Security Specialist (Vice President), NatWest Group
-20+ years enterprise security · 12+ years in a global regulated bank · CCSP · CAIGS
+20+ years enterprise IT · 12+ years in security within a global regulated bank · CCSP · CAIGS
 [LinkedIn](https://linkedin.com/in/arunkumar-cloudgrc) · Targeting AI Governance, AI Risk, AI Assurance and Technology Risk roles
 
 ---
